@@ -256,4 +256,36 @@ gdzie $n$ to rozmiar instancji, a $r$ to rozmiar wykorzystywanego bloku.\\
 Wzór ma taką postać ponieważ DLACZEGO ? \\ I JAK OPISAĆ OBLICZANIE WARTOŚCI TEJ FUNKCJI 2 ZMIENNYCH
 \\
 \section{Analiza wyników eksperymentu pomiarowego}
+\subsection{Wstępny opis eksperymentu pomiarowego}
+Eksperyment został przeprowadzony na komputerach w sali laboratoryjnej 2.7.6 przy
+wykorzystaniu funkcji opisanych w punkcie 2.1 wywoływanych w programie, którego jedynym
+zadaniem poza wywołaniem wymienionych wyżej funkcji było losowanie macierzy
+(na początku, przed rozpocżeciem pomiaru czasu) i mierzenie czasu przetwarzania
+(na podstawie stanu zegara przed i po wywołaniu funkcji). Po podaniu wielkości instancji
+i kompilacji programu poddawaliśmy go analizie w programie CodeXL. Ogólnie mierzone (lub dane)
+były następujące wartości:
+\begin{center}
+    \begin{tabular}{ |c|c|c| }
+        \hline
+        Zmienna & Oznaczenie & Wartość progu \\
+        \hline
+        Wielkość instancji & n &  \\
+        Wielkość okna & r &  \\
+        Czas przetwarzania & Tobl &  \\
+        Liczba instrukcji assemblera & LIA &  250 000\\
+        Liczba cykli procesora & LCP & 250 000 \\
+        Liczba dostępów do L1 & LDP & 250 000 \\
+        Liczba braków trafień do L3 & BTL3 & 50 000 \\
+        Liczba braków trafień do bufora translacji & BTBT & 50 000 \\
+        \hline
+    \end{tabular}
+\end{center}
+Wielkością instancji określamy rozmiar mnożonej macierzy kwadratowej.\\
+Pomiary zbierane były w taki sposób, aby nie uruchamiać na raz analizy wielu
+parametrów, gdyż mogłoby to zakłócić wyniki. Aby tego uniknąć mierzyliśmy najpierw 
+LDP, BTL3 i BTBT, a dopiero później LIA i LCP. Odczytane wyniki zapisywaliśmy do 
+załączonego arkusza kalkulacyjnego. Dokonaliśmy też wstępnej analizy instrukcji
+assemblera, które składały się na nasz program aby zobaczyć które z nich najbardziej
+obciążały procesor (było ich najwięcej).
+
 \end{document}

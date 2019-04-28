@@ -1,8 +1,8 @@
 # Fdb version 3
-["pdflatex"] 1556485623 "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.tex" "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.pdf" "Sprawozdanie" 1556485624
+["pdflatex"] 1556487316 "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.tex" "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.pdf" "Sprawozdanie" 1556487317
   "/etc/texmf/web2c/texmf.cnf" 1538904940 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.aux" 1556485624 2300 febec4cfbf4df46370d247f17de15b96 ""
-  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.tex" 1556485475 12573 754df2bcc102835c442bc6cb3e1ed9ff ""
+  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.aux" 1556487317 2414 43346175d1df2058dc41b586afe15c3b ""
+  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.tex" 1556487317 14306 0e34b89c0b188405ae2ca227ea513ac9 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/pl/plme.enc" 1480098668 3126 59f33ff3e396436ebc36f4e7b444d5c4 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/pl/plmi.enc" 1480098668 2005 f094775651a1386335c158fb632529f1 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/pl/plms.enc" 1480098668 2468 3f9e2f3088bcf5b581dfc367d71e7d95 ""
@@ -214,11 +214,11 @@
   "6loops1.png" 1556482434 6560 84011819dba1ebf68dafc8e4ef81de8e ""
   "6loops2.png" 1556482461 6753 8a6e644c3f86aa7cc3e9761cd5374f78 ""
   "6loops3.png" 1556482485 7036 46441fe4093cb12e443c7bb9de11d023 ""
-  "Sprawozdanie.aux" 1556485624 2300 febec4cfbf4df46370d247f17de15b96 ""
-  "Sprawozdanie.tex" 1556485475 12573 754df2bcc102835c442bc6cb3e1ed9ff ""
+  "Sprawozdanie.aux" 1556487317 2414 43346175d1df2058dc41b586afe15c3b ""
+  "Sprawozdanie.tex" 1556487317 14306 0e34b89c0b188405ae2ca227ea513ac9 ""
   (generated)
-  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.pdf"
-  "Sprawozdanie.pdf"
-  "Sprawozdanie.aux"
   "Sprawozdanie.log"
   "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.log"
+  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.pdf"
+  "Sprawozdanie.aux"
+  "Sprawozdanie.pdf"
