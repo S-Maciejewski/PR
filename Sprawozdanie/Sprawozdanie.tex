@@ -393,10 +393,56 @@ to czas trwania cyklu zegara procesora w sekundach.
 \end{equation}
 \\
 \subsubsection*{Komentarz do miar efektywności}
-Przy obliczaniu $KPDI$ można wydzielić dwa skrajne przypadki: \\
+Przy obliczaniu $KPD$ można wydzielić dwa skrajne przypadki: \\
 - w optymistycznym przypadku każda linia pamięci zostanie pobrana dokładnie raz,
-stąd $KPDI$ w takim przypadku to $KPDI = 1$\\
+stąd $KPD$ w takim przypadku to $KPD = 1$\\
 - w pesymistycznym przypadku w każdej iteracji algorytmu z trzema pętlami wystąpi
-brak trafienia do pamięci dla każdej z macierzy, wówczas $$KPDI = \frac{3n^3 * 64}{4 * 3n^2}
+brak trafienia do pamięci dla każdej z macierzy, wówczas $$KPD = \frac{3n^3 * 64}{4 * 3n^2}
 = 16 n^2$$.
+
+\subsection{Obliczone miary efektywności}
+\begin{center}
+    \begin{tabular}{ |c|c|c|c|c|c|c|c|c|c| }
+        \hline
+        n & PP [GFLOPS] & IPC1 & IPCS & WBTL3 & WDD & WBTBT & KPD & MKS & Sp \\
+        \hline
+        400&1,6410&0,7552&3,0208&4,95E-03&0,6546&2,16E-04&58,3333& &0,3974\\
+        \hline
+        450&1,6720&0,4029&1,6117&5,35E-03&0,6712&2,41E-03&69,7942& &0,5780\\
+        \hline
+        550&1,1514&0,2315&0,9259&6,34E-03&0,6646&8,74E-02&99,6143& &0,3253\\
+        \hline
+        600&0,6912&0,1531&0,6122&5,97E-03&0,6937&1,71E-01&100,7407& &0,1504\\
+        \hline
+        700&0,4076&0,0884&0,3538&1,02E-02&0,7291&2,98E-01&189,9320& &0,0986\\
+        \hline
+    \end{tabular}
+    \captionof{table}{Miary efektywności dla 3 pętli, przetwarzanie równolegle}
+\end{center}
+
+\begin{center}
+    \begin{tabular}{ |c|c|c|c|c|c|c|c|c|c| }
+        \hline
+        n & r & PP [GFLOPS] & IPC1 & IPCS & WBTL3 & WDD & WBTBT & KPD & MKS \\
+        \hline
+        1500&100&4,2776&2,4062&9,6249&2,30E-03&0,1425&2,64E-04&318,5778& \\
+        \hline
+        1500&300&2,5215&0,8047&3,2186&3,78E-03&0,3163&9,13E-04&237,2741& \\
+        \hline
+        1500&400&1,5158&0,4213&1,6851&2,43E-03&0,8966&1,48E-03&141,2741& \\
+        \hline
+        1500&500&2,2858&1,5655&6,2619&5,96E-04&0,1317&4,79E-02&85,3333& \\
+        \hline
+        1500&750&0,9211&0,2766&1,1064&2,14E-03&0,3074&2,59E-01&128,7111& \\
+        \hline
+        2000&200&4,3597&1,1857&4,7428&2,33E-03&0,3060&1,86E-04&188,3333& \\
+        \hline
+    \end{tabular}
+    \captionof{table}{Miary efektywności dla 3 pętli, przetwarzanie równolegle}
+\end{center}
+
+
+
+\section{Wnioki}
+
 \end{document}
