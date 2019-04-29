@@ -1,8 +1,8 @@
 # Fdb version 3
-["pdflatex"] 1556566218 "/home/jan/Desktop/PR-lab/Sprawozdanie/Sprawozdanie.tex" "/home/jan/Desktop/PR-lab/Sprawozdanie/Sprawozdanie.pdf" "Sprawozdanie" 1556566219
+["pdflatex"] 1556566511 "/home/jan/Desktop/PR-lab/Sprawozdanie/Sprawozdanie.tex" "/home/jan/Desktop/PR-lab/Sprawozdanie/Sprawozdanie.pdf" "Sprawozdanie" 1556566512
   "/etc/texmf/web2c/texmf.cnf" 1536759282 1101 af7716885e081ab43982cab7b4672c1a ""
-  "/home/jan/Desktop/PR-lab/Sprawozdanie/Sprawozdanie.aux" 1556566219 3280 d7f19456a4893911f61a7a25b960978e ""
-  "/home/jan/Desktop/PR-lab/Sprawozdanie/Sprawozdanie.tex" 1556566218 21887 747a1124f2766d743863b215166482bd ""
+  "/home/jan/Desktop/PR-lab/Sprawozdanie/Sprawozdanie.aux" 1556566512 3786 678d528d8320e18133edbe4c7b532646 ""
+  "/home/jan/Desktop/PR-lab/Sprawozdanie/Sprawozdanie.tex" 1556566510 23520 085180e9c808f9dc387cfb817a3bdb47 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/pl/plme.enc" 1136849721 3126 59f33ff3e396436ebc36f4e7b444d5c4 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/pl/plmi.enc" 1136849721 2005 f094775651a1386335c158fb632529f1 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/pl/plms.enc" 1136849721 2468 3f9e2f3088bcf5b581dfc367d71e7d95 ""
@@ -219,11 +219,13 @@
   "6loops1.png" 1556543146 6560 84011819dba1ebf68dafc8e4ef81de8e ""
   "6loops2.png" 1556543146 6753 8a6e644c3f86aa7cc3e9761cd5374f78 ""
   "6loops3.png" 1556543146 7036 46441fe4093cb12e443c7bb9de11d023 ""
-  "Sprawozdanie.aux" 1556566219 3280 d7f19456a4893911f61a7a25b960978e ""
-  "Sprawozdanie.tex" 1556566218 21887 747a1124f2766d743863b215166482bd ""
+  "Sprawozdanie.aux" 1556566512 3786 678d528d8320e18133edbe4c7b532646 ""
+  "Sprawozdanie.tex" 1556566510 23520 085180e9c808f9dc387cfb817a3bdb47 ""
   (generated)
   "/home/jan/Desktop/PR-lab/Sprawozdanie/Sprawozdanie.pdf"
-  "Sprawozdanie.pdf"
-  "Sprawozdanie.log"
   "Sprawozdanie.aux"
+  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.log"
+  "Sprawozdanie.pdf"
+  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.pdf"
+  "Sprawozdanie.log"
   "/home/jan/Desktop/PR-lab/Sprawozdanie/Sprawozdanie.log"
