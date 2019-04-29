@@ -350,4 +350,53 @@ obciążały procesor (było ich najwięcej).
     \captionof{table}{Wyniki dla 3 pętli, przetwarzanie sekwencyjne}
 \end{center}
 
+\subsection{Miary efektywności}
+W celu analizy jakości przetwarzania stosujemy opisane następującymi
+wzorami miary efektywności:\\
+\subsubsection*{Prędkość przetwarzania}
+\begin{equation}
+    PP = \frac{2 * n^3}{Tobl}
+\end{equation}
+\subsubsection*{Liczba instrukcji na cykl procesora IPC1 dla procesora}
+\begin{equation}
+    IPC1 = \frac{LIA}{LCP}
+\end{equation}
+\subsubsection*{Liczba instrukcji na cykl procesora IPCS dla systemu}
+\begin{equation}
+    IPCS = \frac{LIA*LPF}{LCP}
+\end{equation}
+\subsubsection*{Wskaźnik braków trafień do pamięci podręcznej L3}
+\begin{equation}
+    WBTL3 = \frac{BTL3}{LIA}
+\end{equation}
+\subsubsection*{Wskaźnik dostępu do danych}
+\begin{equation}
+    WDD = \frac{LDP}{LIA}
+\end{equation}
+\subsubsection*{Wskaźnik braków trafień do głównego bufora translacji adresów}
+\begin{equation}
+    WBTBT = \frac{BTBT}{LDP}
+\end{equation}
+\subsubsection*{Krotność pobierania danych instancji do pamięci podręcznej}
+\begin{equation}
+    KPD = \frac{BTL3 * 64}{4 * 3 * n * n}
+\end{equation}
+\subsubsection*{Miara kosztu synchronizacji}
+\begin{equation}
+    MKS = \frac{CCP - CWP}{CCP} = \frac{LUPF * Tobl - LCP * Tclk}{LUPF * Tobl}
+\end{equation}
+Gdzie $LUPF$ to liczba użytych procesorów fizycznych (liczba wątków OMP), a $Tclk$ 
+to czas trwania cyklu zegara procesora w sekundach.
+\subsubsection*{Przyspieszenie przetwarzania równoległego}
+\begin{equation}
+    Sp(rownolegle\: A) = \frac{Tobl(obliczenia \: sekwencyjne \: IKJ)}{Tobl(obliczenia \: rownolegle \: A)}
+\end{equation}
+\\
+\subsubsection*{Komentarz do miar efektywności}
+Przy obliczaniu $KPDI$ można wydzielić dwa skrajne przypadki: \\
+- w optymistycznym przypadku każda linia pamięci zostanie pobrana dokładnie raz,
+stąd $KPDI$ w takim przypadku to $KPDI = 1$\\
+- w pesymistycznym przypadku w każdej iteracji algorytmu z trzema pętlami wystąpi
+brak trafienia do pamięci dla każdej z macierzy, wówczas $$KPDI = \frac{3n^3 * 64}{4 * 3n^2}
+= 16 n^2$$.
 \end{document}

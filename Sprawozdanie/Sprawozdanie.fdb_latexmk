@@ -1,8 +1,8 @@
 # Fdb version 3
-["pdflatex"] 1556535860 "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.tex" "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.pdf" "Sprawozdanie" 1556535861
+["pdflatex"] 1556538868 "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.tex" "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.pdf" "Sprawozdanie" 1556538869
   "/etc/texmf/web2c/texmf.cnf" 1538904940 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.aux" 1556535861 3053 a5ccab8adef7799dda0a439385b31cfa ""
-  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.tex" 1556535860 16389 f9b9aeec4c11b100784a922c545bcdd3 ""
+  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.aux" 1556538869 3147 4ee0cb71d85a61ba08b8f998b63c87ba ""
+  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.tex" 1556538868 18370 550156c3ff89b2f4d3f2bc78ea93cc01 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/pl/plme.enc" 1480098668 3126 59f33ff3e396436ebc36f4e7b444d5c4 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/pl/plmi.enc" 1480098668 2005 f094775651a1386335c158fb632529f1 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/pl/plms.enc" 1480098668 2468 3f9e2f3088bcf5b581dfc367d71e7d95 ""
@@ -214,11 +214,11 @@
   "6loops1.png" 1556482434 6560 84011819dba1ebf68dafc8e4ef81de8e ""
   "6loops2.png" 1556482461 6753 8a6e644c3f86aa7cc3e9761cd5374f78 ""
   "6loops3.png" 1556482485 7036 46441fe4093cb12e443c7bb9de11d023 ""
-  "Sprawozdanie.aux" 1556535861 3053 a5ccab8adef7799dda0a439385b31cfa ""
-  "Sprawozdanie.tex" 1556535860 16389 f9b9aeec4c11b100784a922c545bcdd3 ""
+  "Sprawozdanie.aux" 1556538869 3147 4ee0cb71d85a61ba08b8f998b63c87ba ""
+  "Sprawozdanie.tex" 1556538868 18370 550156c3ff89b2f4d3f2bc78ea93cc01 ""
   (generated)
   "Sprawozdanie.aux"
-  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.pdf"
   "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.log"
+  "/media/seba/Data/Projekty/PR/Sprawozdanie/Sprawozdanie.pdf"
   "Sprawozdanie.pdf"
   "Sprawozdanie.log"
