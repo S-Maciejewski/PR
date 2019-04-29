@@ -13,6 +13,9 @@
 \usepackage{colortbl}
 \usepackage{geometry}
 \usepackage{listings}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 \geometry{a4paper, total={170mm,257mm}, left=20mm, top=20mm }
 \lstset
 {
@@ -119,7 +122,7 @@ linii pamięci mieści się 16 zmiennych typu float, używanych prez nas w oblic
 instancji w naszych pomiarach były $\geq 400$. Mając to na uwadze, możemy się zająć analizą ryzyka
 wystąpienia zjawiska false sharingu.\\
 W wersji przetwarzania równolegle dla 3 pętli mamy do czynienia z podziałem pracy przed 1. pętlą, $j$,
-która odpowiada da licznik kolumn.\\
+która odpowiada za licznik kolumn.\\
 DUŻY ZNAK ZAPYTANIA ? NAD TYM:\\
 W tym wypadku możemy stwierdzić, że z uwagi na to, iż każdy z procesów zapisuje dane
 jedynie do swojej kolumny macierzy, zjawisko false sharingu nie wystąpi gdyż rozmiar jednej kolumny jest
@@ -136,17 +139,17 @@ DO OBGADANIA, BO JEŚLI JEST TAK Z WIERSZAMI, TO W 6 PĘTLACH NIE BĘDZIE FALSE 
 
 \subsubsection{Podział przetwarzania w metodzie 3-pętlowej}
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{3loops1.png}
-    \caption{Obszar danych dla jednej wewnętrznej pętli}
+	\centering
+	\includegraphics[width=0.5\textwidth]{3loops1.png}
+	\caption{Obszar danych dla jednej wewnętrznej pętli}
 \end{figure}
 
 JAKIŚ OPIS
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{3loops2.png}
-    \caption{Obszar danych dla dwóch wewnętrznych pętli}
+	\centering
+	\includegraphics[width=0.5\textwidth]{3loops2.png}
+	\caption{Obszar danych dla dwóch wewnętrznych pętli}
 \end{figure}
 JAKIŚ OPIS
 
@@ -156,21 +159,21 @@ JAKIŚ OPIS
 TODO OPISY
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{6loops1.png}
-    \caption{Obszar danych dla pętli $kk$}
+	\centering
+	\includegraphics[width=0.5\textwidth]{6loops1.png}
+	\caption{Obszar danych dla pętli $kk$}
 \end{figure}
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{6loops2.png}
-    \caption{Obszar danych dla pętli $jj$, $kk$}
+	\centering
+	\includegraphics[width=0.5\textwidth]{6loops2.png}
+	\caption{Obszar danych dla pętli $jj$, $kk$}
 \end{figure}
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{6loops3.png}
-    \caption{Obszar danych dla pętli $ii$, $jj$, $kk$}
+	\centering
+	\includegraphics[width=0.5\textwidth]{6loops3.png}
+	\caption{Obszar danych dla pętli $ii$, $jj$, $kk$}
 \end{figure}
 
 \newpage
@@ -190,24 +193,44 @@ ponieważ część danych obecnych w niej pokrywa się z danymi w L3. Również 
 jest przy tym założeniu pomijana, ponieważ jej pojemność jest tak mała, że jej uwzględnianie
 nie miało by znaczącego wpływu na obliczane wielkośći instancji.\\
 Przy obliczeniach zakładamy, że 1 MB = 1000 KB = 1000000 B, przy czym pojedyncza zmienna typu
-float, z których korzystamy, ma rozmiar 4 B.
+float, z których korzystamy, ma rozmiar 4 B.\\
 \\
-Dla metody 3 pętli wzór, którego używamy do obliczania rozmiaru instancji, dla której
+Dla metody \textbf{3 pętli} wzór, którego używamy do obliczania rozmiaru instancji, dla której
 będzie zachowana lokalność czasowa to:
 $$
-    n^2 * 4 + n * 16 * 4 + n * 16 * 4 \leq \frac{6 * 1000000}{4}
+n^2 * 4B + 2 * n * 64B \leq \frac{6000000B}{4}
 $$
-przy czym $n$ to rozmiar instancji.\\
-Wzór ma taką postać, bo DLACZEGO DOKŁADNIE TAK BYŁO?\\
-Po obliczeniu uzyskana wartość $n$ rozmiaru instancji, dla której wciąż będzie zachowana
+przy czym $n$ to rozmiar instancji.\\\\
+Warunek zachowania lokalności czasowej będzie spełniony jeżeli pamięć podręczna pomieści:
+\begin{enumerate} \itemsep0pt
+    \item[a)] jedną kolumnę macierzy C (zajmowana pamięć wyniesie $n * 64B$, ponieważ macierz jest w pamięci 
+    przechowywana wierszami i każdy element kolumny będzie w innej linii pamięci)
+    \item[b)] całą macierz A (zajmowana pamięć wyniesie $n^2 * 4$B - macierz zawiera $n^2$ elementów po 4B każdy)
+    \item[c)] jedną kolumnę macierzy B (zajmowana pamięć wyniesie $n * 64B$, analogicznie do punktu a).
+\end{enumerate}
+Wielkość pamięci podręcznej w systemie, na którym przeprowadzane były doświadczenia wynosi 6MB i 
+jest to pamięć współdzielona pomiędzy 4 rdzeniami procesora. Stąd też suma wielkości pamięci podręcznej 
+wymaganej do przechowania potrzebnych elementów każdej macierzy powinna być mniejsza niż czwarta 
+część całej pamięci podręcznej w systemie.\\
+Po rozwiązaniu nierówności uzyskana wartość $n$ rozmiaru instancji, dla której wciąż będzie zachowana
 lokalność czasowa to w przybliżeniu $n \leq 596$.\\
-Dla metody 6 pętli wzór do obliczenia rozmiaru instancji ma postać:
+
+Dla metody \textbf{6 pętli} wzór do obliczenia rozmiaru instancji ma postać:
 $$
-    3*4*r^2 \leq 6000000
+3*r^2 * 4B \leq 6000000B
 $$
 gdzie $r$ to rozmiar wykorzystywanego bloku, pobieranego każdorazowo z macierzy.\\
-Wzór ma taką postać ponieważ DLACZEGO DOKŁADNIE\\
-Po obliczeniu wartość $r$, dla której będzie zachowana lokalność czasowa to $r \leq 707$.
+
+Każdy z wątków przetwarzania potrzebuje stałego dostepu do fragmentu macierzy B o rozmiarze $r \times r$, ponieważ
+ten fragment czytany jest wielokrotnie przez każdy wątek podczas kolejnych iteracji. Dodatkowo każdy wątek odczytuje 
+dane z kolejnych wierszy fragmentu macierzy A i zapisuje do kolejnych wierszy fragmentu macierzy wynikowej C, 
+więc w pamięci podręcznej należy umieścić również $r \times r$ elementów dla macierzy C i $r \times r$ elementów 
+dla macierzy A (jest to pewne uproszczenie obliczeń, ponieważ każdy wątek w kolejnych iteracjach potrzebuje 
+dostępu tylko do wierszy fragmentów macierzy C i A, ale ostatecznie wszystkie wiersze z obu fragmentów zostaną
+wykorzystane, więc bezpiecznie jest trzymać je wszystkie od razu w pamięci podręcznej). Łącznie więc w pamięci 
+podręcznej musimy przechować 3 fragmenty zawierające $r \times r$ elementów po 4B każdy.\\
+
+Wyznaczona wartość $r$, dla której będzie zachowana lokalność czasowa to $r \leq 707$.
 
 \subsection{Analiza lokalności przestrzennej}
 Lokalność przestrzenna jest związana z występowaniem w systemie pamięci wirtualnej.
@@ -220,7 +243,8 @@ zamiast fizycznymi adresami mającymi bezpośrednie odwzorowanie w pamięci RAM.
 Taka pamięć jest dzielona na strony o rozmiarze 4 kB, które stanowią jeden, ciągły obszar w pamięci.
 Aby taki system mógł działać, pamięć RAM jest dzielona na ramki, których rozmiar odpowiada
 rozmiarowi stron. Strony mogą się znajdować w pamięci lub we wspomnianym wyżej pliku wymiany,
-co sprawia, że procesor musi posługiwać się logicznymi adresami aby uzyskać dostęp do danych.//
+co sprawia, że procesor musi posługiwać się logicznymi adresami aby uzyskać dostęp do danych.\\
+
 Taka organizacja pamięci wymusza obecność mechanizmu tłumaczenia adresów logicznych
 na fizyczne, czyli odwzorowania adresów strony na adres ramki pamięci. Informacje o takich
 odwzorowaniach znajdują się w tablicy stron. W tym miejscu stosuje się pewne usprawnienie, jako, że
@@ -228,32 +252,48 @@ przeglądanie takiej tablicy przy każdym odwołaniu byłoby bardzo mało wydajn
 jest bufor translacji adresu TLB, który posiada określoną, stałą liczbę adresów stron i odpowiadającyh
 im ramek, dzięki czemu można szybko dokonać translacji adresu logicznego na fizyczny.
 Jednak tak jak w pamięci podręcznej, tak i w buforze translacji występuje ograniczenie rozmiaru.\\
-\\
+
 Program chechuje się zachowaniem lokalności przestrzennej wtedy, kiedy nie występują sytuacje,
 w których w buforze translacji nie znajduje się adres szukanej strony. W procesorze, z którego
 korzystaliśmy przy obliczeniach bufor translacji mieści 544 pary adres strony - adres ramki.
 Każda ze stron pamięci wirtualnej ma rozmiar 4 kB, tak więc mieści 1024 liczby z wykorzystywanej
-przez nas macierzy.
-
+przez nas macierzy.\\
 
 Aby znaleźć wielkośći instancji, dla których przetwarzanie zachowa lokalność przestrzenną dla
-3 pętli posłużyliśmy się wzorem:
+\textbf{3 pętli} posłużyliśmy się wzorem:
 $$
-    \frac{n*n}{1024} + n + n \leq 544
+\ceil*{\frac{n^2}{1024}} + 2 * min\Big(n, \ceil*{\frac{n^2}{1024}}\Big) \leq 544
 $$
 gdzie $n$ to rozmiar instancji.\\
-Taka postać wzoru wynika z Z CZEGO ?\\
-\\
-Po obliczeniu wartość $n$, dla której będzie zachowana lokalność przestrzenna to $n \leq 243$.
+
+Pierwszy człon reprezentuje liczbę stron zawierających wszystkie elementy macierzy A, natomiast kolejny
+to dwukrotność (człon jest identyczny dla macierzy B i C) liczby stron zawierających jedną kolumnę macierzy.
+Jeżeli rozmiar macierzy $n$ przekracza 1024 elementy, to każdy element kolumny macierzy będzie na innej stronie,
+więc, żeby zapewnić dostęp do całej kolumny, potrzebne będą 1024 strony. Jeżeli zaś rozmiar macierzy będzie
+mniejszy od 1024, to może zdarzyć się, że dwa kolejne elementy macierzy będą znajdowały się na tej samej 
+stronie i liczba stron potrzebnych do zawarcia całej kolumny będzie taka sama jak w przypadku macierzy A.\\
+
+Po rozwiązaniu nierówności, wartość $n$, dla której będzie zachowana lokalność przestrzenna to $n \leq 430$.
 \\
 
-Dla 6 pętli wzór na znalezienie takich wartośći $n$ i $r$, dla których przetwarzanie zachowa
+Dla \textbf{6 pętli} wzór na znalezienie takich wartośći $n$ i $r$, dla których przetwarzanie zachowa
 lokalność przestrzenną, wygląda następująco:
 $$
-    min\Big(r, \frac{r*n}{1024}\Big) + 2*min\Big(\frac{r}{4}, \frac{\frac{r}{4} * n}{1024}\Big) \leq 544
+min\Big(r, \frac{r*n}{1024}\Big) + 2*min\Big(\frac{r}{4}, \frac{\frac{r}{4} * n}{1024}\Big) \leq 544
 $$
 gdzie $n$ to rozmiar instancji, a $r$ to rozmiar wykorzystywanego bloku.\\
-Wzór ma taką postać ponieważ DLACZEGO ? \\ I JAK OPISAĆ OBLICZANIE WARTOŚCI TEJ FUNKCJI 2 ZMIENNYCH
+
+W przypadku 6 pętli lokalność przestrzenna zależy zarówno od rozmiaru instancji $n$, jak i od rozmiaru 
+okna $r$. Każdy wątek przetwarzania potrzebuje dostępu do $r \times r$ elementów fragmentu macierzy B oraz
+dwóch fragmentów $r \times \frac{r}{4}$ macierzy C i A. Liczba stron potrzebnych do dostępu do wszystkich 
+elementów fragmentu macierzy B to $r$ (jeżeli $n \leq 1024$ - każdy wiersz znajduje się na osobnej stronie) 
+lub $r*n / 1024$ (w przeciwnym wypadku - kilka wierszy może znajdować się na tej samej stronie). Liczbę stron 
+dla mniejszych fragmentów macierzy C i A można obliczyć w analogiczny sposób, z tym, że w tym przypadku rozpatrywany
+fragment będzie miał wysokość $r/4$ zamiast $r$.\\
+
+W naszych pomiarach przyjęliśmy, że rozmiar instancji będzie większy od 1024 (przyjęliśmy 1500).
+Po podstawieniu wartości 1500 w miejsce $n$ we wzorze i rozwiązaniu nierówności, wartość $r$, przy której 
+zostanie zachowana lokalność przestrzenna to $r \leq 362$.
 \\
 \section{Analiza wyników eksperymentu pomiarowego}
 \subsection{Wstępny opis eksperymentu pomiarowego}
@@ -265,21 +305,21 @@ zadaniem poza wywołaniem wymienionych wyżej funkcji było losowanie macierzy
 i kompilacji programu poddawaliśmy go analizie w programie CodeXL. Ogólnie mierzone (lub dane)
 były następujące wartości:
 \begin{center}
-    \begin{tabular}{ |c|c|c| }
-        \hline
-        Zmienna & Oznaczenie & Wartość progu \\
-        \hline
-        Wielkość instancji & n &  \\
-        Wielkość okna & r &  \\
-        Czas przetwarzania & Tobl &  \\
-        Liczba instrukcji assemblera & LIA &  250 000\\
-        Liczba cykli procesora & LCP & 250 000 \\
-        Liczba dostępów do L1 & LDP & 250 000 \\
-        Liczba braków trafień do L3 & BTL3 & 50 000 \\
-        Liczba braków trafień do bufora translacji & BTBT & 50 000 \\
-        \hline
-    \end{tabular}
-    \captionof{table}{Oznaczenia i progi zmiennych}
+	\begin{tabular}{ |c|c|c| }
+		\hline
+		Zmienna                                      & Oznaczenie & Wartość progu \\
+		\hline
+		Wielkość instancji                         & n          &                 \\
+		Wielkość okna                              & r          &                 \\
+		Czas przetwarzania                           & Tobl       &                 \\
+		Liczba instrukcji assemblera                 & LIA        & 250 000         \\
+		Liczba cykli procesora                       & LCP        & 250 000         \\
+		Liczba dostępów do L1                      & LDP        & 250 000         \\
+		Liczba braków trafień do L3                & BTL3       & 50 000          \\
+		Liczba braków trafień do bufora translacji & BTBT       & 50 000          \\
+		\hline
+	\end{tabular}
+	\captionof{table}{Oznaczenia i progi zmiennych}
 \end{center}
 Wielkością instancji określamy rozmiar mnożonej macierzy kwadratowej.\\
 Pomiary zbierane były w taki sposób, aby nie uruchamiać na raz analizy zbyt wielu
@@ -290,64 +330,64 @@ assemblera, które składały się na nasz program aby zobaczyć które z nich n
 obciążały procesor (było ich najwięcej).
 \subsection{Wyniki uzyskane w eksperymencie}
 \begin{center}
-    \begin{tabular}{ |c|c|c|c|c|c|c|c| }
-        \hline
-        n & Tobl & LIA & LCP & LDP & BTL3 & BTBT \\
-        \hline
-        400	& 0.078	& 1413 & 1871 & 925 & 35 & 1\\
-        \hline
-        450	& 0.109 & 1980 & 4914 &	1329 & 53 &	16\\
-        \hline
-        550	& 0.289 & 3566 & 15405 & 2370 &	113	& 1036\\
-        \hline
-        600 & 0.625 & 4554 & 29754 & 3159 &	136 & 2697\\
-        \hline
-        700	& 1.683 & 6856 & 77515 & 4999 & 349	& 7458\\
-        \hline
-    \end{tabular}
-    \captionof{table}{Wyniki dla 3 pętli, przetwarzanie równolegle}
+	\begin{tabular}{ |c|c|c|c|c|c|c|c| }
+		\hline
+		n   & Tobl  & LIA  & LCP   & LDP  & BTL3 & BTBT \\
+		\hline
+		400 & 0.078 & 1413 & 1871  & 925  & 35   & 1    \\
+		\hline
+		450 & 0.109 & 1980 & 4914  & 1329 & 53   & 16   \\
+		\hline
+		550 & 0.289 & 3566 & 15405 & 2370 & 113  & 1036 \\
+		\hline
+		600 & 0.625 & 4554 & 29754 & 3159 & 136  & 2697 \\
+		\hline
+		700 & 1.683 & 6856 & 77515 & 4999 & 349  & 7458 \\
+		\hline
+	\end{tabular}
+	\captionof{table}{Wyniki dla 3 pętli, przetwarzanie równolegle}
 \end{center}
 
 \begin{center}
-    \begin{tabular}{ |c|c|c|c|c|c|c|c|c| }
-        \hline
-        n & r & Tobl & LIA & LCP & LDP & BTL3 & BTBT \\
-        \hline
-        1500 & 100 & 1.5780 & 233901 & 97207 & 33332 & 2688 & 44\\
-        \hline
-        1500 & 300 & 2.6770 & 105947 & 131667 &	33506 & 2002 & 153\\
-        \hline
-        1500 & 400 & 4.4530 & 98107 & 232887 & 87960 & 1192 & 653\\
-        \hline
-        1500 & 500 & 2.9530 & 241691 & 154389 &	31834 & 720 & 7617\\
-        \hline
-        1500 & 750 & 7.3280 & 101394 & 366565 &	31171 & 1086 & 40351\\
-        \hline
-        2000 & 200 & 3.6700 & 242986 & 204930 &	74343 & 2825 & 69\\
-        \hline
-    \end{tabular}
-    \captionof{table}{Wyniki dla 6 pętli, przetwarzanie równolegle}
+	\begin{tabular}{ |c|c|c|c|c|c|c|c|c| }
+		\hline
+		n    & r   & Tobl   & LIA    & LCP    & LDP   & BTL3 & BTBT  \\
+		\hline
+		1500 & 100 & 1.5780 & 233901 & 97207  & 33332 & 2688 & 44    \\
+		\hline
+		1500 & 300 & 2.6770 & 105947 & 131667 & 33506 & 2002 & 153   \\
+		\hline
+		1500 & 400 & 4.4530 & 98107  & 232887 & 87960 & 1192 & 653   \\
+		\hline
+		1500 & 500 & 2.9530 & 241691 & 154389 & 31834 & 720  & 7617  \\
+		\hline
+		1500 & 750 & 7.3280 & 101394 & 366565 & 31171 & 1086 & 40351 \\
+		\hline
+		2000 & 200 & 3.6700 & 242986 & 204930 & 74343 & 2825 & 69    \\
+		\hline
+	\end{tabular}
+	\captionof{table}{Wyniki dla 6 pętli, przetwarzanie równolegle}
 \end{center}
 
 \begin{center}
-    \begin{tabular}{ |c|c|c|c|c|c|c|c| }
-        \hline
-        n & Tobl & LIA & LCP & LDP & BTL3 & BTBT \\
-        \hline
-        400	& 0.0310 & 774 & 582 & 375 & 18 & 1\\
-        \hline
-        450	& 0.0630 & 1073 & 832 &	602 & 17 & 1\\
-        \hline
-        550	& 0.0940 & 1877 & 1431 & 1060 & 24 & 1\\
-        \hline
-        600	& 0.0940 & 2329 & 1577 & 1097 &	23 & 0\\
-        \hline
-        700	 & 0.1660 &	3616 & 2441 & 1685 & 42 & 3\\
-        \hline
-        800	& 0.2340 & 5299 & 3534 & 2454 &	42 & 8\\
-        \hline
-    \end{tabular}
-    \captionof{table}{Wyniki dla 3 pętli, przetwarzanie sekwencyjne}
+	\begin{tabular}{ |c|c|c|c|c|c|c|c| }
+		\hline
+		n   & Tobl   & LIA  & LCP  & LDP  & BTL3 & BTBT \\
+		\hline
+		400 & 0.0310 & 774  & 582  & 375  & 18   & 1    \\
+		\hline
+		450 & 0.0630 & 1073 & 832  & 602  & 17   & 1    \\
+		\hline
+		550 & 0.0940 & 1877 & 1431 & 1060 & 24   & 1    \\
+		\hline
+		600 & 0.0940 & 2329 & 1577 & 1097 & 23   & 0    \\
+		\hline
+		700 & 0.1660 & 3616 & 2441 & 1685 & 42   & 3    \\
+		\hline
+		800 & 0.2340 & 5299 & 3534 & 2454 & 42   & 8    \\
+		\hline
+	\end{tabular}
+	\captionof{table}{Wyniki dla 3 pętli, przetwarzanie sekwencyjne}
 \end{center}
 
 \subsection{Miary efektywności}
@@ -355,41 +395,41 @@ W celu analizy jakości przetwarzania stosujemy opisane następującymi
 wzorami miary efektywności:\\
 \subsubsection*{Prędkość przetwarzania}
 \begin{equation}
-    PP = \frac{2 * n^3}{Tobl}
+	PP = \frac{2 * n^3}{Tobl}
 \end{equation}
 \subsubsection*{Liczba instrukcji na cykl procesora IPC1 dla procesora}
 \begin{equation}
-    IPC1 = \frac{LIA}{LCP}
+	IPC1 = \frac{LIA}{LCP}
 \end{equation}
 \subsubsection*{Liczba instrukcji na cykl procesora IPCS dla systemu}
 \begin{equation}
-    IPCS = \frac{LIA*LPF}{LCP}
+	IPCS = \frac{LIA*LPF}{LCP}
 \end{equation}
 \subsubsection*{Wskaźnik braków trafień do pamięci podręcznej L3}
 \begin{equation}
-    WBTL3 = \frac{BTL3}{LIA}
+	WBTL3 = \frac{BTL3}{LIA}
 \end{equation}
 \subsubsection*{Wskaźnik dostępu do danych}
 \begin{equation}
-    WDD = \frac{LDP}{LIA}
+	WDD = \frac{LDP}{LIA}
 \end{equation}
 \subsubsection*{Wskaźnik braków trafień do głównego bufora translacji adresów}
 \begin{equation}
-    WBTBT = \frac{BTBT}{LDP}
+	WBTBT = \frac{BTBT}{LDP}
 \end{equation}
 \subsubsection*{Krotność pobierania danych instancji do pamięci podręcznej}
 \begin{equation}
-    KPD = \frac{BTL3 * 64}{4 * 3 * n * n}
+	KPD = \frac{BTL3 * 64}{4 * 3 * n * n}
 \end{equation}
 \subsubsection*{Miara kosztu synchronizacji}
 \begin{equation}
-    MKS = \frac{CCP - CWP}{CCP} = \frac{LUPF * Tobl - LCP * Tclk}{LUPF * Tobl}
+	MKS = \frac{CCP - CWP}{CCP} = \frac{LUPF * Tobl - LCP * Tclk}{LUPF * Tobl}
 \end{equation}
 Gdzie $LUPF$ to liczba użytych procesorów fizycznych (liczba wątków OMP), a $Tclk$ 
 to czas trwania cyklu zegara procesora w sekundach.
 \subsubsection*{Przyspieszenie przetwarzania równoległego}
 \begin{equation}
-    Sp(rownolegle\: A) = \frac{Tobl(obliczenia \: sekwencyjne \: IKJ)}{Tobl(obliczenia \: rownolegle \: A)}
+	Sp(rownolegle\: A) = \frac{Tobl(obliczenia \: sekwencyjne \: IKJ)}{Tobl(obliczenia \: rownolegle \: A)}
 \end{equation}
 \\
 \subsubsection*{Komentarz do miar efektywności}
