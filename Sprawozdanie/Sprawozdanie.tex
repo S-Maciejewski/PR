@@ -279,13 +279,75 @@ były następujące wartości:
         Liczba braków trafień do bufora translacji & BTBT & 50 000 \\
         \hline
     \end{tabular}
+    \captionof{table}{Oznaczenia i progi zmiennych}
 \end{center}
 Wielkością instancji określamy rozmiar mnożonej macierzy kwadratowej.\\
-Pomiary zbierane były w taki sposób, aby nie uruchamiać na raz analizy wielu
+Pomiary zbierane były w taki sposób, aby nie uruchamiać na raz analizy zbyt wielu
 parametrów, gdyż mogłoby to zakłócić wyniki. Aby tego uniknąć mierzyliśmy najpierw 
 LDP, BTL3 i BTBT, a dopiero później LIA i LCP. Odczytane wyniki zapisywaliśmy do 
 załączonego arkusza kalkulacyjnego. Dokonaliśmy też wstępnej analizy instrukcji
 assemblera, które składały się na nasz program aby zobaczyć które z nich najbardziej
 obciążały procesor (było ich najwięcej).
+\subsection{Wyniki uzyskane w eksperymencie}
+\begin{center}
+    \begin{tabular}{ |c|c|c|c|c|c|c|c| }
+        \hline
+        n & Tobl & LIA & LCP & LDP & BTL3 & BTBT \\
+        \hline
+        400	& 0.078	& 1413 & 1871 & 925 & 35 & 1\\
+        \hline
+        450	& 0.109 & 1980 & 4914 &	1329 & 53 &	16\\
+        \hline
+        550	& 0.289 & 3566 & 15405 & 2370 &	113	& 1036\\
+        \hline
+        600 & 0.625 & 4554 & 29754 & 3159 &	136 & 2697\\
+        \hline
+        700	& 1.683 & 6856 & 77515 & 4999 & 349	& 7458\\
+        \hline
+    \end{tabular}
+    \captionof{table}{Wyniki dla 3 pętli, przetwarzanie równolegle}
+\end{center}
+
+\begin{center}
+    \begin{tabular}{ |c|c|c|c|c|c|c|c|c| }
+        \hline
+        n & r & Tobl & LIA & LCP & LDP & BTL3 & BTBT \\
+        \hline
+        1500 & 100 & 1.5780 & 233901 & 97207 & 33332 & 2688 & 44\\
+        \hline
+        1500 & 300 & 2.6770 & 105947 & 131667 &	33506 & 2002 & 153\\
+        \hline
+        1500 & 400 & 4.4530 & 98107 & 232887 & 87960 & 1192 & 653\\
+        \hline
+        1500 & 500 & 2.9530 & 241691 & 154389 &	31834 & 720 & 7617\\
+        \hline
+        1500 & 750 & 7.3280 & 101394 & 366565 &	31171 & 1086 & 40351\\
+        \hline
+        2000 & 200 & 3.6700 & 242986 & 204930 &	74343 & 2825 & 69\\
+        \hline
+    \end{tabular}
+    \captionof{table}{Wyniki dla 6 pętli, przetwarzanie równolegle}
+\end{center}
+
+\begin{center}
+    \begin{tabular}{ |c|c|c|c|c|c|c|c| }
+        \hline
+        n & Tobl & LIA & LCP & LDP & BTL3 & BTBT \\
+        \hline
+        400	& 0.0310 & 774 & 582 & 375 & 18 & 1\\
+        \hline
+        450	& 0.0630 & 1073 & 832 &	602 & 17 & 1\\
+        \hline
+        550	& 0.0940 & 1877 & 1431 & 1060 & 24 & 1\\
+        \hline
+        600	& 0.0940 & 2329 & 1577 & 1097 &	23 & 0\\
+        \hline
+        700	 & 0.1660 &	3616 & 2441 & 1685 & 42 & 3\\
+        \hline
+        800	& 0.2340 & 5299 & 3534 & 2454 &	42 & 8\\
+        \hline
+    \end{tabular}
+    \captionof{table}{Wyniki dla 3 pętli, przetwarzanie sekwencyjne}
+\end{center}
 
 \end{document}
