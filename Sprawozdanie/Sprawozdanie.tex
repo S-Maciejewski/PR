@@ -51,7 +51,7 @@ Kod, którego używaliśmy w eksperymencie został tak podzielony, aby cała
 logika przetwarzania znajdowała się w pojedynczej funkcji. Poniżej prezentowany
 jest kod tylko tych funkcji - generowanie macierzy i wypełnianie jej
 losowymi liczbami, liczenie czasu i wypisywanie wyników działają w ten
-sam sposób dla wsystkich wariantów przetwarzania.
+sam sposób dla wszystkich wariantów przetwarzania.
 \subsubsection{Metoda 3 pętli - równolegle}
 \begin{lstlisting}
     void multiply_matrices_JKI()
@@ -101,6 +101,9 @@ operacji, drugi kolejną itd. Dopiero po zakończeniu przetwarzania przez wszyst
 synchronizacja i przejście dalej - do zakończenia pomiaru czasu.
 
 \subsubsection{Analiza ryzyka wystąpienia wyścigu i zjawiska false sharingu}
+
+\subsubsection*{Wyścig}
+
 Zjawisko wyścigu, czyli równoległa modyfikacja tej samej zmiennej przez różne procesy, nie
 występuje w naszym kodzie.\\
 Aby się o tym przekonać wystarczy zwrócić na to, że w naszym przypadku,
@@ -110,8 +113,9 @@ za inkrementację licznika kolumn $j$ (2.1.1, linijki od 3 do 7). Co za tym idzi
 niż pozostałe, więc zjawisko wyścigu nie występuje w tym przypadku.\\
 Podobna sytuacja występuje przy 6 pętlach - każdy proces zapisuje do osobnego wiersza z powodu
 wystąpienia dyrektywy 'parallel for' przed pętlą odpowiedzialną za inkrementację zmiennej $ii$
-(2.1.3, linijki od 7 do 11) - w tym przypadku również nie dojdzie do wyścigu.\\
-\\
+(2.1.3, linijki od 7 do 11) - w tym przypadku również nie dojdzie do wyścigu.
+
+\subsubsection*{False sharing}
 Inaczej sytuacja ma się w przypadku zjawiska false sharingu. False sharing występuje wtedy, gdy
 różne procesy zapisują zmienne znajdujące się w tej samej linii pamięci - wówczas kopie linii
 w pamięciach podręcznych innych procesów stają się nieaktualne i dany proces musi ponownie pobrać
@@ -121,19 +125,22 @@ Długość linii pamięci w systemach, na których wykonywane były pomiary to 6
 linii pamięci mieści się 16 zmiennych typu float, używanych prez nas w obliczeniach. Rozmiary
 instancji w naszych pomiarach były $\geq 400$. Mając to na uwadze, możemy się zająć analizą ryzyka
 wystąpienia zjawiska false sharingu.\\
+
 W wersji przetwarzania równolegle dla 3 pętli mamy do czynienia z podziałem pracy przed 1. pętlą, $j$,
-która odpowiada za licznik kolumn.\\
-DUŻY ZNAK ZAPYTANIA ? NAD TYM:\\
-W tym wypadku możemy stwierdzić, że z uwagi na to, iż każdy z procesów zapisuje dane
-jedynie do swojej kolumny macierzy, zjawisko false sharingu nie wystąpi gdyż rozmiar jednej kolumny jest
-znacznie większy od rozmiaru jednej linii pamięci - dla instancji o wielkości 400, w kolumnie
-mieści się około 50 linii pamięci. Jedynym miejscem, w którym to zjawisko może wystapić są brzegi
-kolumn. (ALE CHYBA JEDNAK WIERSZY)\\
-CZY JEDNAK WYSTĄPI BO MACIERZ JEST UŁOŻONA W PAMIĘCI WIERSZAMI I KAŻDY PROCES ROBI SOBIE KOPIĘ
-WIERSZA, WIĘC JAK KTOŚ COŚ ZMIENI W INNEJ KOLUMNIE TO POTRZEBNY JEST PONOWNY ODCZYT CAŁEGO WIERSZA?\\
-\\
-DO OBGADANIA, BO JEŚLI JEST TAK Z WIERSZAMI, TO W 6 PĘTLACH NIE BĘDZIE FALSE SHARINGU A W 3 BĘDZIE.
-\\
+która odpowiada za licznik kolumn.
+Z uwagi na to, iż każdy z procesów zapisuje dane jedynie do swojej kolumny macierzy wynikowej, 
+zjawisko false sharingu nie wystąpi gdyż szerokość zbioru kolumn przetwarzanych przez jeden wątek jest
+znacznie większa od długości jednej linii pamięci - dla instancji o wielkości 400, każdy wątek będzie
+zapisywał dane do zbioru 100 kolumn, gdzie w jednym wierszu takiego zbioru zmieści się prawie 7 całych linii pamięci. \\
+Jedynym miejscem, w którym to zjawisko może wystapić są brzegi zbiorów kolumn przetwarzanych przez wątki, kiedy linia pamięci 
+zawiera elementy wiersza należące do zbioru kolumn dwóch różnych wątków. Jednakże biorąc pod uwagę to, że wątki przetwarzają kolumny
+sekwencyjnie, przesuwając się w lewo (zgodnie ze zmienna $j$), nawet jeżeli linia pamięci zawierająca ostatnie elementy zbioru kolumn przetwarzanych 
+przez wątek będzie zawierała elementy z następnego zbioru innego wątku, to te elementy już zostały przez ten wątek zapisane i linia pamięci zawierająca 
+te elementy została już zastąpiona przez nową linię, zawierającą elementy dalej na lewo w macierzy C.  \\
+
+Natomiast w wersji 6-pętlowej zjawisko false-sharingu nie występuje, ponieważ każdy wątek zapisuje dane do swojego 
+zbioru wierszy fragmentu $r \times r$ macierzy C i i nie ma możliwości, żeby linia pamięci zawierała elementy wierszy przetwarzanych przez
+dwa różne wątki.
 
 \newpage
 
@@ -141,22 +148,29 @@ DO OBGADANIA, BO JEŚLI JEST TAK Z WIERSZAMI, TO W 6 PĘTLACH NIE BĘDZIE FALSE 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.5\textwidth]{3loops1.png}
-	\caption{Obszar danych dla jednej wewnętrznej pętli}
+	\caption{Obszar danych dla jednej wewnętrznej pętli $i$}
 \end{figure}
 
-JAKIŚ OPIS
+Każdy wątek przy przechodzeniu ostatniej pętli odwołuje się do jednej kolumny macierzy wynikowej C (odwołanie następuje do elementu
+$matrix\_r[i][j]$, gdzie zmianna $j$ jest stała dla ostatniej pętli), analogicznie dla macierzy A (w tym przypadku dla elementu $matrix\_a[i][k]$
+nie zmienia się zmienna $k$). Przy przechodzeniu ostatniej pętli dla macierzy B, obie zmienne określające element $matrix\_b[k][j]$ są stałe, więc 
+wątki odwołują się tylko do jednego elementu macierzy B.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.5\textwidth]{3loops2.png}
-	\caption{Obszar danych dla dwóch wewnętrznych pętli}
+	\caption{Obszar danych dla dwóch wewnętrznych pętli $k$ i $i$}
 \end{figure}
-JAKIŚ OPIS
+
+Dla dwóch pętli każdy wątek przetwarza $k$ razy tą samą kolumnę macierzy C, co w przypadku jednej pętli, wszystkie kolumny 
+macierzy A oraz wszystkie elementy z $j$-tej kolumny macierzy C (zmienna $j$ jest cały czas stała).\\
+
+Rozważając wszystkie pętle i podział pracy między wątkami, każdy wątek będzie po kolei przetwarzał kolejne kolumny macierzy C (wyznaczane przez 
+zmienną $j$), odpowiadające im kolumny macierzy B oraz każdorazowo całą macierz A.
 
 \newpage
 
 \subsubsection{Podział przetwarzania w metodzie 6-pętlowej}
-TODO OPISY
 
 \begin{figure}[h]
 	\centering
@@ -164,17 +178,31 @@ TODO OPISY
 	\caption{Obszar danych dla pętli $kk$}
 \end{figure}
 
+Przy przetwarzaniu ostatniej wewnętrznej pętli każdy wątek przetwarza jeden element macierzy C (zmienia się tylko zmienna $kk$, a odwołania następują do 
+elementu $matrix\_r[ii][jj]$), jeden cały wiersz o szerokości $r$ macierzy A (zmienna $ii$ pozostaje stała przy odwoływaniu się do elementu $matrix\_a[ii][kk]$) oraz 
+do jednej kolumny o wysokości $r$ macierzy B (przy odwoływaniu się do elementu $matrix\_b[kk][jj]$ zmienna $jj$ pozostaje stała).
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.5\textwidth]{6loops2.png}
 	\caption{Obszar danych dla pętli $jj$, $kk$}
 \end{figure}
 
+Rozpatrując dwie pętle wewnętrzne, zmieniają się zmienne $jj$ i $kk$, czyli przy przetwarzaniu macierzy C zmieniane będą elementy z jednego wiersza 
+o szerokości $r$, $r$-krotnie przetwarzany będzie wiersz o szerokości $r$ macierzy A oraz wszystkie elementy fragmentu $r \times r$ macierzy B. 
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.5\textwidth]{6loops3.png}
 	\caption{Obszar danych dla pętli $ii$, $jj$, $kk$}
 \end{figure}
+
+Dla 3 pętli wewnętrznych zmieniają się już wszystkie zmienne $ii$, $jj$ i $kk$, więc przetworzone zostaną wszystkie wiersze fragmentu $r \times r$
+macierzy wynikowej C (odpowiada za to zmienna $ii$), wszystkie wiersze odpowiadającego fragmentu macierzy A oraz $r$ - krotnie przetworzone zostaną 
+wszystkie elementy fragmenu $r \times r$ macierzy B. \\
+
+Podział pracy w naszym przypadku odbywa się przed pętlą $ii$, więc każdy wątek będzie przetwarzał grupę wierszy z fragmentu $r \times r$ macierzy C, 
+odpowiadający mu fragment macierzy A oraz wielkrotnie cały fragment $r \times r$ macierzy B.
 
 \newpage
 
@@ -203,10 +231,10 @@ $$
 przy czym $n$ to rozmiar instancji.\\\\
 Warunek zachowania lokalności czasowej będzie spełniony jeżeli pamięć podręczna pomieści:
 \begin{enumerate} \itemsep0pt
-    \item[a)] jedną kolumnę macierzy C (zajmowana pamięć wyniesie $n * 64B$, ponieważ macierz jest w pamięci 
-    przechowywana wierszami i każdy element kolumny będzie w innej linii pamięci)
-    \item[b)] całą macierz A (zajmowana pamięć wyniesie $n^2 * 4$B - macierz zawiera $n^2$ elementów po 4B każdy)
-    \item[c)] jedną kolumnę macierzy B (zajmowana pamięć wyniesie $n * 64B$, analogicznie do punktu a).
+	\item[a)] jedną kolumnę macierzy C (zajmowana pamięć wyniesie $n * 64B$, ponieważ macierz jest w pamięci 
+	      przechowywana wierszami i każdy element kolumny będzie w innej linii pamięci)
+	\item[b)] całą macierz A (zajmowana pamięć wyniesie $n^2 * 4$B - macierz zawiera $n^2$ elementów po 4B każdy)
+	\item[c)] jedną kolumnę macierzy B (zajmowana pamięć wyniesie $n * 64B$, analogicznie do punktu a).
 \end{enumerate}
 Wielkość pamięci podręcznej w systemie, na którym przeprowadzane były doświadczenia wynosi 6MB i 
 jest to pamięć współdzielona pomiędzy 4 rdzeniami procesora. Stąd też suma wielkości pamięci podręcznej 
@@ -442,43 +470,43 @@ brak trafienia do pamięci dla każdej z macierzy, wówczas $$KPD = \frac{3n^3 *
 
 \subsection{Obliczone miary efektywności}
 \begin{center}
-    \begin{tabular}{ |c|c|c|c|c|c|c|c|c|c| }
-        \hline
-        n & PP [GFLOPS] & IPC1 & IPCS & WBTL3 & WDD & WBTBT & KPD & MKS & Sp \\
-        \hline
-        400&1,6410&0,7552&3,0208&4,95E-03&0,6546&2,16E-04&58,3333& &0,3974\\
-        \hline
-        450&1,6720&0,4029&1,6117&5,35E-03&0,6712&2,41E-03&69,7942& &0,5780\\
-        \hline
-        550&1,1514&0,2315&0,9259&6,34E-03&0,6646&8,74E-02&99,6143& &0,3253\\
-        \hline
-        600&0,6912&0,1531&0,6122&5,97E-03&0,6937&1,71E-01&100,7407& &0,1504\\
-        \hline
-        700&0,4076&0,0884&0,3538&1,02E-02&0,7291&2,98E-01&189,9320& &0,0986\\
-        \hline
-    \end{tabular}
-    \captionof{table}{Miary efektywności dla 3 pętli, przetwarzanie równolegle}
+	\begin{tabular}{ |c|c|c|c|c|c|c|c|c|c| }
+		\hline
+		n   & PP [GFLOPS] & IPC1   & IPCS   & WBTL3    & WDD    & WBTBT    & KPD      & MKS & Sp     \\
+		\hline
+		400 & 1,6410      & 0,7552 & 3,0208 & 4,95E-03 & 0,6546 & 2,16E-04 & 58,3333  &     & 0,3974 \\
+		\hline
+		450 & 1,6720      & 0,4029 & 1,6117 & 5,35E-03 & 0,6712 & 2,41E-03 & 69,7942  &     & 0,5780 \\
+		\hline
+		550 & 1,1514      & 0,2315 & 0,9259 & 6,34E-03 & 0,6646 & 8,74E-02 & 99,6143  &     & 0,3253 \\
+		\hline
+		600 & 0,6912      & 0,1531 & 0,6122 & 5,97E-03 & 0,6937 & 1,71E-01 & 100,7407 &     & 0,1504 \\
+		\hline
+		700 & 0,4076      & 0,0884 & 0,3538 & 1,02E-02 & 0,7291 & 2,98E-01 & 189,9320 &     & 0,0986 \\
+		\hline
+	\end{tabular}
+	\captionof{table}{Miary efektywności dla 3 pętli, przetwarzanie równolegle}
 \end{center}
 
 \begin{center}
-    \begin{tabular}{ |c|c|c|c|c|c|c|c|c|c| }
-        \hline
-        n & r & PP [GFLOPS] & IPC1 & IPCS & WBTL3 & WDD & WBTBT & KPD & MKS \\
-        \hline
-        1500&100&4,2776&2,4062&9,6249&2,30E-03&0,1425&2,64E-04&318,5778& \\
-        \hline
-        1500&300&2,5215&0,8047&3,2186&3,78E-03&0,3163&9,13E-04&237,2741& \\
-        \hline
-        1500&400&1,5158&0,4213&1,6851&2,43E-03&0,8966&1,48E-03&141,2741& \\
-        \hline
-        1500&500&2,2858&1,5655&6,2619&5,96E-04&0,1317&4,79E-02&85,3333& \\
-        \hline
-        1500&750&0,9211&0,2766&1,1064&2,14E-03&0,3074&2,59E-01&128,7111& \\
-        \hline
-        2000&200&4,3597&1,1857&4,7428&2,33E-03&0,3060&1,86E-04&188,3333& \\
-        \hline
-    \end{tabular}
-    \captionof{table}{Miary efektywności dla 6 pętli, przetwarzanie równolegle}
+	\begin{tabular}{ |c|c|c|c|c|c|c|c|c|c| }
+		\hline
+		n    & r   & PP [GFLOPS] & IPC1   & IPCS   & WBTL3    & WDD    & WBTBT    & KPD      & MKS \\
+		\hline
+		1500 & 100 & 4,2776      & 2,4062 & 9,6249 & 2,30E-03 & 0,1425 & 2,64E-04 & 318,5778 &     \\
+		\hline
+		1500 & 300 & 2,5215      & 0,8047 & 3,2186 & 3,78E-03 & 0,3163 & 9,13E-04 & 237,2741 &     \\
+		\hline
+		1500 & 400 & 1,5158      & 0,4213 & 1,6851 & 2,43E-03 & 0,8966 & 1,48E-03 & 141,2741 &     \\
+		\hline
+		1500 & 500 & 2,2858      & 1,5655 & 6,2619 & 5,96E-04 & 0,1317 & 4,79E-02 & 85,3333  &     \\
+		\hline
+		1500 & 750 & 0,9211      & 0,2766 & 1,1064 & 2,14E-03 & 0,3074 & 2,59E-01 & 128,7111 &     \\
+		\hline
+		2000 & 200 & 4,3597      & 1,1857 & 4,7428 & 2,33E-03 & 0,3060 & 1,86E-04 & 188,3333 &     \\
+		\hline
+	\end{tabular}
+	\captionof{table}{Miary efektywności dla 6 pętli, przetwarzanie równolegle}
 \end{center}
 
 \section{Wnioki}
