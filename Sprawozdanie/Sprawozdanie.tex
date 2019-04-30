@@ -225,9 +225,9 @@ float, z których korzystamy, ma rozmiar 4 B.\\
 \\
 Dla metody \textbf{3 pętli} wzór, którego używamy do obliczania rozmiaru instancji, dla której
 będzie zachowana lokalność czasowa to:
-$$
-n^2 * 4B + 2 * n * 64B \leq \frac{6000000B}{4}
-$$
+\begin{equation}
+	n^2 * 4B + 2 * n * 64B \leq \frac{6000000B}{4}
+\end{equation}
 przy czym $n$ to rozmiar instancji.\\\\
 Warunek zachowania lokalności czasowej będzie spełniony jeżeli pamięć podręczna pomieści:
 \begin{enumerate} \itemsep0pt
@@ -244,9 +244,9 @@ Po rozwiązaniu nierówności uzyskana wartość $n$ rozmiaru instancji, dla kt�
 lokalność czasowa to w przybliżeniu $n \leq 596$.\\
 
 Dla metody \textbf{6 pętli} wzór do obliczenia rozmiaru instancji ma postać:
-$$
-3*r^2 * 4B \leq 6000000B
-$$
+\begin{equation}
+	3*r^2 * 4B \leq 6000000B
+\end{equation}
 gdzie $r$ to rozmiar wykorzystywanego bloku, pobieranego każdorazowo z macierzy.\\
 
 Każdy z wątków przetwarzania potrzebuje stałego dostepu do fragmentu macierzy B o rozmiarze $r \times r$, ponieważ
@@ -289,9 +289,9 @@ przez nas macierzy.\\
 
 Aby znaleźć wielkośći instancji, dla których przetwarzanie zachowa lokalność przestrzenną dla
 \textbf{3 pętli} posłużyliśmy się wzorem:
-$$
-\ceil*{\frac{n^2}{1024}} + 2 * min\Big(n, \ceil*{\frac{n^2}{1024}}\Big) \leq 544
-$$
+\begin{equation}
+	\ceil*{\frac{n^2}{1024}} + 2 * min\Big(n, \ceil*{\frac{n^2}{1024}}\Big) \leq 544
+\end{equation}
 gdzie $n$ to rozmiar instancji.\\
 
 Pierwszy człon reprezentuje liczbę stron zawierających wszystkie elementy macierzy A, natomiast kolejny
@@ -306,9 +306,10 @@ Po rozwiązaniu nierówności, wartość $n$, dla której będzie zachowana loka
 
 Dla \textbf{6 pętli} wzór na znalezienie takich wartośći $n$ i $r$, dla których przetwarzanie zachowa
 lokalność przestrzenną, wygląda następująco:
-$$
-min\Big(r, \frac{r*n}{1024}\Big) + 2*min\Big(\frac{r}{4}, \frac{\frac{r}{4} * n}{1024}\Big) \leq 544
-$$
+\begin{equation}
+	min\Big(r, \frac{r*n}{1024}\Big) + 2*min\Big(\frac{r}{4}, \frac{\frac{r}{4} * n}{1024}\Big) \leq 544
+\end{equation}
+
 gdzie $n$ to rozmiar instancji, a $r$ to rozmiar wykorzystywanego bloku.\\
 
 W przypadku 6 pętli lokalność przestrzenna zależy zarówno od rozmiaru instancji $n$, jak i od rozmiaru 
@@ -331,7 +332,7 @@ zadaniem poza wywołaniem wymienionych wyżej funkcji było losowanie macierzy
 (na początku, przed rozpocżeciem pomiaru czasu) i mierzenie czasu przetwarzania
 (na podstawie stanu zegara przed i po wywołaniu funkcji). Po podaniu wielkości instancji
 i kompilacji programu poddawaliśmy go analizie w programie CodeXL. Ogólnie mierzone (lub dane)
-były następujące wartości:
+były następujące wielkości:
 \begin{center}
 	\begin{tabular}{ |c|c|c| }
 		\hline
@@ -349,7 +350,13 @@ były następujące wartości:
 	\end{tabular}
 	\captionof{table}{Oznaczenia i progi zmiennych}
 \end{center}
-Wielkością instancji określamy rozmiar mnożonej macierzy kwadratowej.\\
+Wielkością instancji określamy rozmiar mnożonej macierzy kwadratowej.
+Pomiary wykonaliśmy dla następujących instancji:
+\begin{itemize}
+	\item 3 pętle - rozmiar macierzy 400, 450, 550, 600, 700
+	\item 6 pętli - rozmiar macierzy 1500 + rozmiar okna 100, 300, 400, 500, 750 oraz \\rozmiar macierzy 2000 + rozmiar okna 200
+\end{itemize}
+
 Pomiary zbierane były w taki sposób, aby nie uruchamiać na raz analizy zbyt wielu
 parametrów, gdyż mogłoby to zakłócić wyniki. Aby tego uniknąć mierzyliśmy najpierw 
 LDP, BTL3 i BTBT, a dopiero później LIA i LCP. Odczytane wyniki zapisywaliśmy do 
