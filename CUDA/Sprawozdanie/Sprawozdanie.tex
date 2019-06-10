@@ -6,6 +6,7 @@
 \usepackage{hhline}
 \usepackage{pgfplots}
 \usepackage{multicol}
+\usepackage{multirow}
 %\usepackage{slashbox}
 \usepackage{graphicx}
 \usepackage{caption}
@@ -46,7 +47,7 @@ Warianty kodu:\\
 - grid wieloblokowy, obliczenia przy wykorzystaniu pamięci współdzielonej bloku wątków.\\
 Każdy z tych wariantów był wykorzystywany w dwóch wersjach - z łączonym oraz niełączonym
 dostępem do pamięci. Zastosowaliśmy dwa rozmiary bloków - 8x8 i 16x16, a pomiary pobraliśmy
-dla instancji o różnych wielkościach (128x128, 256x256, 512x512, 1024x1024).
+dla instancji o różnych wielkościach (128x128, 256x256, 512x512, 864x864, 1024x1024).
 
 Wszystkie pomiary zostały wykonane na komputerach laboratoryjnych w sali 2.7.6. na karcie
 Nvidia GTX 260.
@@ -55,12 +56,12 @@ Nvidia GTX 260.
 \begin{itemize}
 	\item karta graficzna Nvidia GTX 260
 	      \begin{itemize}
-		      \item compute capability - 1.3
-		      \item liczba multiprocesorów - 27
-		      \item maksymalna liczba bloków na jeden multiprocesor - 8
-		      \item maksymalna liczba wątków w bloku - 512
-		      \item warp size - 32
-		      \item half-warp size - 16
+	      	\item compute capability - 1.3
+	      	\item liczba multiprocesorów - 27
+	      	\item maksymalna liczba bloków na jeden multiprocesor - 8
+	      	\item maksymalna liczba wątków w bloku - 512
+	      	\item warp size - 32
+	      	\item half-warp size - 16
 	      \end{itemize}
 	\item Visual Studio 2013
 	\item Nvidia Visual Profiler
@@ -82,7 +83,7 @@ odpowiadają za przechowywanie fragmentów mnożonej macierzy. Dla każdego blok
 dane są pobierane do jego pamięci współdzielonej, następnie każdy z wątków wylicza
 na ich podstawie swój wynik. \\
 Taka organizacja przetwarzania mogłaby prowadzić do problemów z np. nadpisywaniem danych,
-więc konieczka jest synchronizacja - aby "poczekać" na zakończenie przetwarzania przez wszystkie wątki, wywoływana
+więc konieczna jest synchronizacja - aby 'poczekać' na zakończenie przetwarzania przez wszystkie wątki, wywoływana
 jest funkcja \_\_syncthreads. Po zakończeniu przetwarzania, wynik jest zapisywany w
 pamięci globalnej.
 
@@ -99,7 +100,7 @@ w pamięci) nazywany jest dostępem niełączonym.
 \newpage
 
 \subsection{Istotne fragmenty kodu}
-\subsubsection*{Dostęp łączony, pamięć globalna}
+\subsubsection*{Wariant G\_L - dostęp łączony, pamięć globalna}
 \begin{lstlisting}
 	template <int BLOCK_SIZE> __global__ void matrixMulCUDA(float *C, float *A,
 	float *B, int wA,
@@ -124,7 +125,7 @@ w pamięci) nazywany jest dostępem niełączonym.
 }
 \end{lstlisting}
 
-\subsubsection*{Dostęp niełączony, pamięć globalna}
+\subsubsection*{Wariant G\_NL - Dostęp niełączony, pamięć globalna}
 \begin{lstlisting}
 	template <int BLOCK_SIZE> __global__ void matrixMulCUDA(float *C, float *A,
 	float *B, int wA,
@@ -149,7 +150,7 @@ w pamięci) nazywany jest dostępem niełączonym.
 }
 \end{lstlisting}
 
-\subsubsection*{Dostęp łączony, pamięć współdzielona bloku wątków}
+\subsubsection*{Wariant S\_L - dostęp łączony, pamięć współdzielona bloku wątków}
 \begin{lstlisting}
 	template <int BLOCK_SIZE> __global__ void matrixMulCUDA(float *C, float *A,
 	float *B, int wA,
@@ -181,7 +182,7 @@ w pamięci) nazywany jest dostępem niełączonym.
 }
 \end{lstlisting}
 
-\subsubsection*{Dostęp niełączony, pamięć współdzielona bloku wątków}
+\subsubsection*{Wariant S\_NL - dostęp niełączony, pamięć współdzielona bloku wątków}
 \begin{lstlisting}
 	template <int BLOCK_SIZE> __global__ void matrixMulCUDA(float *C, float *A,
 	float *B, int wA,
@@ -244,15 +245,15 @@ $BLOCK\_SIZE$ to wielokść bloku.
 \subsection{Miary efektywności}
 \subsubsection*{Prędkość obliczeń}
 \begin{equation}
-	\frac{ZL}{C} = \frac{2 * n^3}{C}
+	\frac{ZL}{t} = \frac{2 * n^3}{t}
 \end{equation}
-gdzie $ZL$ to złożoność obliczeniowa, $C$ to czas a $n$ to rozmiar instancji.
+gdzie $ZL$ to złożoność obliczeniowa, $t$ to czas, a $n$ to rozmiar instancji.
 
 \subsubsection*{Przyspieszenie w stosunku do IKJ}
 \begin{equation}
-	\frac{C\_IKJ}{CPR}
+	\frac{t_{IKJ}}{CPR}
 \end{equation}
-gdzie $C\_IKJ$ to czas przetwarzania IKJ a $CPR$ to czas przetwarzania równoległego.
+gdzie $t_{IKJ}$ to czas przetwarzania IKJ a $CPR$ to czas przetwarzania równoległego.
 
 \subsubsection*{Przyspieszenie w funkcji wielkości instancji}
 \begin{equation}
@@ -303,57 +304,73 @@ gdzie $SM$ to liczba multiprocesorów.
 \subsection{Wyniki pomiarów}
 
 \begin{table}
-
-
+											
+											
 \end{table}
 
 \begin{center}
-	\begin{tabular}{ |c|c|c|c|c|c|c|c|c|c|c| }
+	\begin{tabular}{ |c|c|c|c|c|c|c|c|c|c|c|c| }
 		\hline
-		V & BS & INST & GFLOPS & vs IKJ & $\Delta A$ & CMGA & JOIN & \% &  GLD\_E & GST\_E \\ \hline
-		G\_L   & 8  & 128  & 25,32073626 & 12,0739 & 1,0000    & 0,0039 & 733,8826   & 50\%  & 5184     & 141208  \\ \hline
-		      &    & 256  & 30,63327366 & 2,7388  & 6,6126    & 0,0019 & 1512,4980  & 50\%  & 10368    & 10904   \\ \hline
-		      &    & 512  & 26,32677471 & 2,6480  & 61,5543   & 0,0010 & 3045,1146  & 50\%  & 20736    & 591     \\ \hline
-		      &    & 864  & 22,22919876 & 2,4298  & 350,3191  & 0,0006 & 5162,9016  & 50\%  & 34992    & 59      \\ \hline
-		      &    & 1024 & 24,66069324 & 5,8681  & 525,7037  & 0,0005 & 6120,9971  & 50\%  & 41472    & 35      \\ \hline
-		      & 16 & 128  & 33,95345298 & 16,1903 & 1,0000    & 0,0039 & 245,8109   & 100\% & 1728     & 282894  \\ \hline
-		      &    & 256  & 32,58490086 & 2,9133  & 8,3360    & 0,0019 & 552,7462   & 100\% & 3456     & 17551   \\ \hline
-		      &    & 512  & 34,41340787 & 3,4614  & 63,1446   & 0,0010 & 1136,8067  & 100\% & 6912     & 1141    \\ \hline
-		      &    & 864  & 32,75306701 & 3,5801  & 318,8183  & 0,0006 & 1930,8138  & 100\% & 11664    & 133     \\ \hline
-		      &    & 1024 & 29,89612411 & 7,1139  & 581,4857  & 0,0005 & 2286,2996  & 100\% & 13824    & 63      \\ \hline
-		G\_NL  & 8  & 128  & 10,11192223 & 4,8217  & 1,0000    & 0,0039 & 242,4433   & 50\%  & 3888     & 77004   \\ \hline
-		      &    & 256  & 9,662213325 & 0,8639  & 8,3723    & 0,0019 & 501,8743   & 50\%  & 7776     & 4603    \\ \hline
-		      &    & 512  & 6,010390691 & 0,6045  & 107,6740  & 0,0010 & 1012,7101  & 50\%  & 15552    & 181     \\ \hline
-		      &    & 864  & 6,303300587 & 0,6890  & 493,3749  & 0,0006 & 1718,6194  & 50\%  & 26244    & 23      \\ \hline
-		      &    & 1024 & 4,254822746 & 1,0124  & 1216,8084 & 0,0005 & 2037,9817  & 50\%  & 31104    & 8       \\ \hline
-		      & 16 & 128  & 5,148311945 & 2,4549  & 1,0000    & 0,0039 & 29,1321    & 100\% & 3672     & 41510   \\ \hline
-		      &    & 256  & 5,148414636 & 0,4603  & 7,9998    & 0,0019 & 65,2732    & 100\% & 7344     & 2595    \\ \hline
-		      &    & 512  & 3,569637799 & 0,3590  & 92,3040   & 0,0010 & 133,9956   & 100\% & 14688    & 112     \\ \hline
-		      &    & 864  & 3,316741109 & 0,3625  & 477,3804  & 0,0006 & 227,4108   & 100\% & 24786    & 13      \\ \hline
-		      &    & 1024 & 2,167744905 & 0,5158  & 1215,9806 & 0,0005 & 269,2327   & 100\% & 29376    & 4       \\ \hline
-		S\_L   & 8  & 128  & 33,09585582 & 15,7813 & 1,0000    & 1      & 3879,0936  & 50\%  & 864      & 1112210 \\ \hline
-		      &    & 256  & 38,81404571 & 3,4702  & 6,8214    & 1      & 8493,2578  & 50\%  & 1728     & 82978   \\ \hline
-		      &    & 512  & 39,20490797 & 3,9433  & 54,0273   & 1      & 17661,6646 & 50\%  & 3456     & 5254    \\ \hline
-		      &    & 864  & 23,68074399 & 2,5885  & 429,8229  & 1      & 25701,0879 & 50\%  & 6912     & 330     \\ \hline
-		      &    & 1024 & 65,60469794 & 15,6108 & 258,2906  & 1      & 42639,0980 & 50\%  & 5832     & 652     \\ \hline
-		      & 16 & 128  & 17,17252759 & 8,1885  & 1,0000    & 1      & 2352,7619  & 100\% & 0        & 2155375 \\ \hline
-		      &    & 256  & 20,78304377 & 1,8581  & 6,6102    & 1      & 6582,7043  & 100\% & 0        & 170279  \\ \hline
-		      &    & 512  & 21,7859839  & 2,1913  & 50,4472   & 1      & 15496,4703 & 100\% & 0        & 11433   \\ \hline
-		      &    & 864  & 21,82694331 & 2,3858  & 241,9650  & 1      & 27996,8000 & 100\% & 0        & 1426    \\ \hline
-		      &    & 1024 & 21,80557117 & 5,1887  & 403,2150  & 1      & 33641,2658 & 100\% & 0        & 724     \\ \hline
-		S\_NL  & 8  & 128  & 31,95027271 & 15,2351 & 1,0000    & 1      & 1429,1397  & 50\%  & 540      & 1726347 \\ \hline
-		      &    & 256  & 38,67665172 & 3,4580  & 6,6087    & 1      & 3247,4221  & 50\%  & 1080     & 132073  \\ \hline
-		      &    & 512  & 39,13595265 & 3,9364  & 52,2491   & 1      & 6899,0877  & 50\%  & 2160     & 8390    \\ \hline
-		      &    & 864  & 39,36259325 & 4,3026  & 249,6331  & 1      & 11969,1021 & 50\%  & 3645     & 1041    \\ \hline
-		      &    & 1024 & 35,79431614 & 8,5174  & 457,0150  & 1      & 14265,8722 & 50\%  & 4320     & 487     \\ \hline
-		      & 16 & 128  & 16,64049767 & 7,9348  & 1,0000    & 1      & 297,6386   & 100\% & 229,5    & 2118706 \\ \hline
-		      &    & 256  & 20,38662765 & 1,8227  & 6,5300    & 1      & 810,5569   & 100\% & 459      & 164427  \\ \hline
-		      &    & 512  & 21,71864653 & 2,1845  & 49,0358   & 1      & 1871,3958  & 100\% & 918      & 10961   \\ \hline
-		      &    & 864  & 21,81985743 & 2,3851  & 234,5448  & 1      & 3348,4545  & 100\% & 1549,125 & 1358    \\ \hline
-		      &    & 1024 & 21,79336548 & 5,1858  & 390,9417  & 1      & 4014,0147  & 100\% & 1836     & 688     \\ \hline
+		V                       & BS                  & INST & T[ms]  & GFLOPS & vs IKJ & $\Delta A$ & CMGA   & JOIN     & \%    & GLD\_E   & GST\_E  \\ \hline
+		\multirow{10}{*}{G\_L}  & \multirow{5}{*}{8}  & 128  & 0,17   & 25,32  & 12,07  & 1,00       & 0,0039 & 733,88   & 50\%  & 5184     & 141208  \\ \cline{3-12}
+		                        &                     & 256  & 1,10   & 30,63  & 2,74   & 6,61       & 0,0019 & 1512,50  & 50\%  & 10368    & 10904   \\ \cline{3-12}
+		                        &                     & 512  & 10,20  & 26,33  & 2,65   & 61,55      & 0,0010 & 3045,11  & 50\%  & 20736    & 591     \\ \cline{3-12}
+		                        &                     & 864  & 58,03  & 22,23  & 2,43   & 350,32     & 0,0006 & 5162,90  & 50\%  & 34992    & 59      \\ \cline{3-12}
+		                        &                     & 1024 & 87,08  & 24,66  & 5,87   & 525,70     & 0,0005 & 6121,00  & 50\%  & 41472    & 35      \\ \cline{2-12}
+		                        & \multirow{5}{*}{16} & 128  & 0,12   & 33,95  & 16,19  & 1,00       & 0,0039 & 245,81   & 100\% & 1728     & 282894  \\ \cline{3-12}
+		                        &                     & 256  & 1,03   & 32,58  & 2,91   & 8,34       & 0,0019 & 552,75   & 100\% & 3456     & 17551   \\ \cline{3-12}
+		                        &                     & 512  & 7,80   & 34,41  & 3,46   & 63,14      & 0,0010 & 1136,81  & 100\% & 6912     & 1141    \\ \cline{3-12}
+		                        &                     & 864  & 39,38  & 32,75  & 3,58   & 318,82     & 0,0006 & 1930,81  & 100\% & 11664    & 133     \\ \cline{3-12}
+		                        &                     & 1024 & 71,83  & 29,90  & 7,11   & 581,49     & 0,0005 & 2286,30  & 100\% & 13824    & 63      \\ \cline{1-12}
+		\multirow{10}{*}{G\_NL} & \multirow{5}{*}{8}  & 128  & 0,41   & 10,11  & 4,82   & 1,00       & 0,0039 & 242,44   & 50\%  & 3888     & 77004   \\ \cline{3-12}
+		                        &                     & 256  & 3,47   & 9,66   & 0,86   & 8,37       & 0,0019 & 501,87   & 50\%  & 7776     & 4603    \\ \cline{3-12}
+		                        &                     & 512  & 44,66  & 6,01   & 0,60   & 107,67     & 0,0010 & 1012,71  & 50\%  & 15552    & 181     \\ \cline{3-12}
+		                        &                     & 864  & 204,65 & 6,30   & 0,69   & 493,37     & 0,0006 & 1718,62  & 50\%  & 26244    & 23      \\ \cline{3-12}
+		                        &                     & 1024 & 504,72 & 4,25   & 1,01   & 1216,81    & 0,0005 & 2037,98  & 50\%  & 31104    & 8       \\ \cline{2-12}
+		                        & \multirow{5}{*}{16} & 128  & 0,81   & 5,15   & 2,45   & 1,00       & 0,0039 & 29,13    & 100\% & 3672     & 41510   \\ \cline{3-12}
+		                        &                     & 256  & 6,52   & 5,15   & 0,46   & 8,00       & 0,0019 & 65,27    & 100\% & 7344     & 2595    \\ \cline{3-12}
+		                        &                     & 512  & 75,20  & 3,57   & 0,36   & 92,30      & 0,0010 & 134,00   & 100\% & 14688    & 112     \\ \cline{3-12}
+		                        &                     & 864  & 388,92 & 3,32   & 0,36   & 477,38     & 0,0006 & 227,41   & 100\% & 24786    & 13      \\ \cline{3-12}
+		                        &                     & 1024 & 990,65 & 2,17   & 0,52   & 1215,98    & 0,0005 & 269,23   & 100\% & 29376    & 4       \\ \cline{1-12}
+		\multirow{10}{*}{S\_L}  & \multirow{5}{*}{8}  & 128  & 0,13   & 33,10  & 15,78  & 1,00       & 1      & 3879,09  & 50\%  & 864      & 1112210 \\ \cline{3-12}
+		                        &                     & 256  & 0,86   & 38,81  & 3,47   & 6,82       & 1      & 8493,26  & 50\%  & 1728     & 82978   \\ \cline{3-12}
+		                        &                     & 512  & 6,85   & 39,20  & 3,94   & 54,03      & 1      & 17661,66 & 50\%  & 3456     & 5254    \\ \cline{3-12}
+		                        &                     & 864  & 54,47  & 23,68  & 2,59   & 429,82     & 1      & 25701,09 & 50\%  & 6912     & 330     \\ \cline{3-12}
+		                        &                     & 1024 & 32,73  & 65,60  & 15,61  & 258,29     & 1      & 42639,10 & 50\%  & 5832     & 652     \\ \cline{2-12}
+		                        & \multirow{5}{*}{16} & 128  & 0,24   & 17,17  & 8,19   & 1,00       & 1      & 2352,76  & 100\% & 0        & 2155375 \\ \cline{3-12}
+		                        &                     & 256  & 1,61   & 20,78  & 1,86   & 6,61       & 1      & 6582,70  & 100\% & 0        & 170279  \\ \cline{3-12}
+		                        &                     & 512  & 12,32  & 21,79  & 2,19   & 50,45      & 1      & 15496,47 & 100\% & 0        & 11433   \\ \cline{3-12}
+		                        &                     & 864  & 59,10  & 21,83  & 2,39   & 241,97     & 1      & 27996,80 & 100\% & 0        & 1426    \\ \cline{3-12}
+		                        &                     & 1024 & 98,48  & 21,81  & 5,19   & 403,22     & 1      & 33641,27 & 100\% & 0        & 724     \\ \cline{1-12}
+		\multirow{10}{*}{S\_NL} & \multirow{5}{*}{8}  & 128  & 0,13   & 31,95  & 15,24  & 1,00       & 1      & 1429,14  & 50\%  & 540      & 1726347 \\ \cline{3-12}
+		                        &                     & 256  & 0,87   & 38,68  & 3,46   & 6,61       & 1      & 3247,42  & 50\%  & 1080     & 132073  \\ \cline{3-12}
+		                        &                     & 512  & 6,86   & 39,14  & 3,94   & 52,25      & 1      & 6899,09  & 50\%  & 2160     & 8390    \\ \cline{3-12}
+		                        &                     & 864  & 32,77  & 39,36  & 4,30   & 249,63     & 1      & 11969,10 & 50\%  & 3645     & 1041    \\ \cline{3-12}
+		                        &                     & 1024 & 60,00  & 35,79  & 8,52   & 457,02     & 1      & 14265,87 & 50\%  & 4320     & 487     \\ \cline{2-12}
+		                        & \multirow{5}{*}{16} & 128  & 0,25   & 16,64  & 7,93   & 1,00       & 1      & 297,64   & 100\% & 229,5    & 2118706 \\ \cline{3-12}
+		                        &                     & 256  & 1,65   & 20,39  & 1,82   & 6,53       & 1      & 810,56   & 100\% & 459      & 164427  \\ \cline{3-12}
+		                        &                     & 512  & 12,36  & 21,72  & 2,18   & 49,04      & 1      & 1871,40  & 100\% & 918      & 10961   \\ \cline{3-12}
+		                        &                     & 864  & 59,12  & 21,82  & 2,39   & 234,54     & 1      & 3348,45  & 100\% & 1549,125 & 1358    \\ \cline{3-12}
+		                        &                     & 1024 & 98,54  & 21,79  & 5,19   & 390,94     & 1      & 4014,01  & 100\% & 1836     & 688     \\ \cline{1-12}
 	\end{tabular}
 	\captionof{table}{Miary efektywności dla 6 pętli, przetwarzanie równolegle}
 \end{center}
+
+Nazwy kolumn:
+\begin{itemize}
+	\item V - wersja kodu 
+	\item BS - rozmiar bloku 
+	\item INST - rozmiar instancji (długość boku macierzy)
+	\item T[ms] - czas przetwarzania w ms 
+	\item GFLOPS - prędkość przetwarzania
+	\item vs IKJ - przyspieszenie w stosunku do IJK 
+	\item $\Delta A$ - zmiana przyspieszenia w funkcji wielkości instancji
+	\item JOIN - miara stopnia łączenia dostępów do pamięci globalnej
+	\item \% - zajętość multiprocesora
+	\item GLD\_E - gld\_efficiency 
+	\item GST\_E - gst\_efficiency
+\end{itemize}
+
 
 \section{Wnioski}
 Po przeanalizowaniu wyników
