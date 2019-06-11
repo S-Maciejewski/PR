@@ -282,20 +282,18 @@ oraz 1 operację zapisu do pamięci globalnej.\\
 Warto zauważyć, że dla współdzielonej pamięci bloku wątków CGMA będzie bliski 1,
 ponieważ pomijamy operacje pobierania danych z pamięci globalnej do lokalnej.
 
-gdzie $n$ to wielkość instancji.
 
 \subsubsection*{GLD\_EFFICIENCY}
 Jest to miara efektywności pobierania danych z pamięci globalnej obliczana w sposób
 następujący:
 \begin{equation}
-	\frac{gld\_reques}{gld\_total / (2*SM)}
+	\frac{gld\_reques}{(gld\_32 + gld\_64 + gld\_128) / (2*SM)}
 \end{equation}
 gdzie $SM$ to liczba multiprocesorów.
 
 \subsubsection*{GST\_EFFICIENCY}
 Jest to miara efektywności zapisu danych w pamięci globalnej.
-Oblicza się ją analogicznie
-do GLD\_EFFICIENCY.
+Oblicza się ją analogicznie do GLD\_EFFICIENCY.
 \begin{equation}
 	\frac{gst\_reques}{(gst\_32 + gst\_64 + gst\_128) / (2*SM)}
 \end{equation}
@@ -373,7 +371,14 @@ Nazwy kolumn:
 
 
 \section{Wnioski}
-Po przeanalizowaniu wyników
+Przy analizie wyników przeprowadzonego eksperymentu można na pierwszy rzut oka zauważyć
+pewne prawidłowości. Dwie z nich to: zajętość procesora odpowiednio 50\% dla bloków 8x8 i 
+100\% dla bloków 16x16 oraz CGMA o wartości 1 dla wszystkich pomiarów dla kodu ze współdzieloną
+pamięcią bloku wątków. Obie obserwacje były łatwe do przewidzenia, bowiem wiążą się one z charakterystyką
+wykorzystanych miar efektywności - zajętość multiprocesora obliczyliśmy w kalkulatorze zajętości,
+a CGMA, jako miara instensywności obliczeń przyjmuje wartoci bardzo małe, gdy pobieramy 
+każdorazowo dane z pamięci globalnej, lub bliskie (lub równe) 1, gdy korzystamy z pamięci
+współdzielonej bloku wątków, czego również można się było spodziewać.
 
 
 \end{document}
