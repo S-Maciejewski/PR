@@ -67,6 +67,8 @@ Nvidia GTX 260.
 	\item Nvidia Visual Profiler
 \end{itemize}
 
+\newpage 
+
 \section{Analiza przygotowania eksperymentu}
 \subsection{Kod wykorzystywany przy pomiarach}
 \subsubsection*{Obliczenia z wykorzystaniem pamięci globalnej}
@@ -89,7 +91,7 @@ pamięci globalnej.
 
 
 \subsubsection{Rodzaje dostępu do pamięci}
-Dostęp do pamięci w kartach graficznych Nvidia odbywa się za pomocą transkacji o rozmiarach
+Dostęp do pamięci w kartach graficznych Nvidia odbywa się za pomocą transakcji o rozmiarach
 32, 64 lub 128 bitów. W karcie na której przeprowadzany był eksperyment (CC 1.3) takie dostępy
 są realizowane dla tzw. half-wrapów - 16 wątkowych grup. \\
 Różnica między dostępem łączonym a niełączonym sprowadza się do tego, że
@@ -150,6 +152,7 @@ w pamięci) nazywany jest dostępem niełączonym.
 }
 \end{lstlisting}
 
+\newpage
 \subsubsection*{Wariant S\_L - dostęp łączony, pamięć współdzielona bloku wątków}
 \begin{lstlisting}
 	template <int BLOCK_SIZE> __global__ void matrixMulCUDA(float *C, float *A,
@@ -213,7 +216,7 @@ w pamięci) nazywany jest dostępem niełączonym.
 	C[row*wA + col] = C_local;
 }
 \end{lstlisting}
-
+\newpage
 \subsubsection*{Wizualizacja przetwarzania}
 Na poniższych grafikach widać różnicę w procesie obliczania macierzy z wykorzystaniem
 pamięci globalnej i pamięci współdzielonej wątków.\\
@@ -264,9 +267,9 @@ instancji o rozmiarze 128, będący naszym punktem odniesienia - obliczamy przys
 w stosunku do przetwarzania instancji o rozmiarze 128.
 
 \subsubsection*{Miara stopnia łączenia dostępów do pamięci}
-Jest to miara obliczana w następujący sposób: dla każdebo bloku pobierane
+Jest to miara obliczana w następujący sposób: dla każdego bloku pobierane
 będą dwie macierze ($n^2$), dodajemy do tego $n^2$ zapisów do pamięci globalnej
-i dzielimy przez sumę transkacji między pamięcią a multiprocesorem (odczytane
+i dzielimy przez sumę transakcji między pamięcią a multiprocesorem (odczytane
 z wyników z programu Visual Profiler).\\
 
 \subsubsection*{Zajętość procesora}
@@ -287,7 +290,7 @@ ponieważ pomijamy operacje pobierania danych z pamięci globalnej do lokalnej.
 Jest to miara efektywności pobierania danych z pamięci globalnej obliczana w sposób
 następujący:
 \begin{equation}
-	\frac{gld\_reques}{(gld\_32 + gld\_64 + gld\_128) / (2*SM)}
+	\frac{gld\_requests}{(gld\_32 + gld\_64 + gld\_128) / (2*SM)}
 \end{equation}
 gdzie $SM$ to liczba multiprocesorów.
 
@@ -295,61 +298,61 @@ gdzie $SM$ to liczba multiprocesorów.
 Jest to miara efektywności zapisu danych w pamięci globalnej.
 Oblicza się ją analogicznie do GLD\_EFFICIENCY.
 \begin{equation}
-	\frac{gst\_reques}{(gst\_32 + gst\_64 + gst\_128) / (2*SM)}
+	\frac{gst\_requests}{(gst\_32 + gst\_64 + gst\_128) / (2*SM)}
 \end{equation}
 gdzie $SM$ to liczba multiprocesorów.
 
-\subsection{Wyniki pomiarów}
+\subsection{Wyniki pomiarów i obliczeń}
 
 \begin{table}
-											
-											
+												
+												
 \end{table}
 
 \begin{center}
 	\begin{tabular}{ |c|c|c|c|c|c|c|c|c|c|c|c| }
 		\hline
-		V                       & BS                  & INST & T[ms]  & GFLOPS & vs IKJ & $\Delta A$ & CMGA   & JOIN     & \%    & GLD\_E   & GST\_E  \\ \hline
-		\multirow{10}{*}{G\_L}  & \multirow{5}{*}{8}  & 128  & 0,17   & 25,32  & 12,07  & 1,00       & 0,0039 & 733,88   & 50\%  & 5184     & 141208  \\ \cline{3-12}
-		                        &                     & 256  & 1,10   & 30,63  & 2,74   & 6,61       & 0,0019 & 1512,50  & 50\%  & 10368    & 10904   \\ \cline{3-12}
-		                        &                     & 512  & 10,20  & 26,33  & 2,65   & 61,55      & 0,0010 & 3045,11  & 50\%  & 20736    & 591     \\ \cline{3-12}
-		                        &                     & 864  & 58,03  & 22,23  & 2,43   & 350,32     & 0,0006 & 5162,90  & 50\%  & 34992    & 59      \\ \cline{3-12}
-		                        &                     & 1024 & 87,08  & 24,66  & 5,87   & 525,70     & 0,0005 & 6121,00  & 50\%  & 41472    & 35      \\ \cline{2-12}
-		                        & \multirow{5}{*}{16} & 128  & 0,12   & 33,95  & 16,19  & 1,00       & 0,0039 & 245,81   & 100\% & 1728     & 282894  \\ \cline{3-12}
-		                        &                     & 256  & 1,03   & 32,58  & 2,91   & 8,34       & 0,0019 & 552,75   & 100\% & 3456     & 17551   \\ \cline{3-12}
-		                        &                     & 512  & 7,80   & 34,41  & 3,46   & 63,14      & 0,0010 & 1136,81  & 100\% & 6912     & 1141    \\ \cline{3-12}
-		                        &                     & 864  & 39,38  & 32,75  & 3,58   & 318,82     & 0,0006 & 1930,81  & 100\% & 11664    & 133     \\ \cline{3-12}
-		                        &                     & 1024 & 71,83  & 29,90  & 7,11   & 581,49     & 0,0005 & 2286,30  & 100\% & 13824    & 63      \\ \cline{1-12}
-		\multirow{10}{*}{G\_NL} & \multirow{5}{*}{8}  & 128  & 0,41   & 10,11  & 4,82   & 1,00       & 0,0039 & 242,44   & 50\%  & 3888     & 77004   \\ \cline{3-12}
-		                        &                     & 256  & 3,47   & 9,66   & 0,86   & 8,37       & 0,0019 & 501,87   & 50\%  & 7776     & 4603    \\ \cline{3-12}
-		                        &                     & 512  & 44,66  & 6,01   & 0,60   & 107,67     & 0,0010 & 1012,71  & 50\%  & 15552    & 181     \\ \cline{3-12}
-		                        &                     & 864  & 204,65 & 6,30   & 0,69   & 493,37     & 0,0006 & 1718,62  & 50\%  & 26244    & 23      \\ \cline{3-12}
-		                        &                     & 1024 & 504,72 & 4,25   & 1,01   & 1216,81    & 0,0005 & 2037,98  & 50\%  & 31104    & 8       \\ \cline{2-12}
-		                        & \multirow{5}{*}{16} & 128  & 0,81   & 5,15   & 2,45   & 1,00       & 0,0039 & 29,13    & 100\% & 3672     & 41510   \\ \cline{3-12}
-		                        &                     & 256  & 6,52   & 5,15   & 0,46   & 8,00       & 0,0019 & 65,27    & 100\% & 7344     & 2595    \\ \cline{3-12}
-		                        &                     & 512  & 75,20  & 3,57   & 0,36   & 92,30      & 0,0010 & 134,00   & 100\% & 14688    & 112     \\ \cline{3-12}
-		                        &                     & 864  & 388,92 & 3,32   & 0,36   & 477,38     & 0,0006 & 227,41   & 100\% & 24786    & 13      \\ \cline{3-12}
-		                        &                     & 1024 & 990,65 & 2,17   & 0,52   & 1215,98    & 0,0005 & 269,23   & 100\% & 29376    & 4       \\ \cline{1-12}
-		\multirow{10}{*}{S\_L}  & \multirow{5}{*}{8}  & 128  & 0,13   & 33,10  & 15,78  & 1,00       & 1      & 3879,09  & 50\%  & 864      & 1112210 \\ \cline{3-12}
-		                        &                     & 256  & 0,86   & 38,81  & 3,47   & 6,82       & 1      & 8493,26  & 50\%  & 1728     & 82978   \\ \cline{3-12}
-		                        &                     & 512  & 6,85   & 39,20  & 3,94   & 54,03      & 1      & 17661,66 & 50\%  & 3456     & 5254    \\ \cline{3-12}
-		                        &                     & 864  & 54,47  & 23,68  & 2,59   & 429,82     & 1      & 25701,09 & 50\%  & 6912     & 330     \\ \cline{3-12}
-		                        &                     & 1024 & 32,73  & 65,60  & 15,61  & 258,29     & 1      & 42639,10 & 50\%  & 5832     & 652     \\ \cline{2-12}
-		                        & \multirow{5}{*}{16} & 128  & 0,24   & 17,17  & 8,19   & 1,00       & 1      & 2352,76  & 100\% & 0        & 2155375 \\ \cline{3-12}
-		                        &                     & 256  & 1,61   & 20,78  & 1,86   & 6,61       & 1      & 6582,70  & 100\% & 0        & 170279  \\ \cline{3-12}
-		                        &                     & 512  & 12,32  & 21,79  & 2,19   & 50,45      & 1      & 15496,47 & 100\% & 0        & 11433   \\ \cline{3-12}
-		                        &                     & 864  & 59,10  & 21,83  & 2,39   & 241,97     & 1      & 27996,80 & 100\% & 0        & 1426    \\ \cline{3-12}
-		                        &                     & 1024 & 98,48  & 21,81  & 5,19   & 403,22     & 1      & 33641,27 & 100\% & 0        & 724     \\ \cline{1-12}
-		\multirow{10}{*}{S\_NL} & \multirow{5}{*}{8}  & 128  & 0,13   & 31,95  & 15,24  & 1,00       & 1      & 1429,14  & 50\%  & 540      & 1726347 \\ \cline{3-12}
-		                        &                     & 256  & 0,87   & 38,68  & 3,46   & 6,61       & 1      & 3247,42  & 50\%  & 1080     & 132073  \\ \cline{3-12}
-		                        &                     & 512  & 6,86   & 39,14  & 3,94   & 52,25      & 1      & 6899,09  & 50\%  & 2160     & 8390    \\ \cline{3-12}
-		                        &                     & 864  & 32,77  & 39,36  & 4,30   & 249,63     & 1      & 11969,10 & 50\%  & 3645     & 1041    \\ \cline{3-12}
-		                        &                     & 1024 & 60,00  & 35,79  & 8,52   & 457,02     & 1      & 14265,87 & 50\%  & 4320     & 487     \\ \cline{2-12}
-		                        & \multirow{5}{*}{16} & 128  & 0,25   & 16,64  & 7,93   & 1,00       & 1      & 297,64   & 100\% & 229,5    & 2118706 \\ \cline{3-12}
-		                        &                     & 256  & 1,65   & 20,39  & 1,82   & 6,53       & 1      & 810,56   & 100\% & 459      & 164427  \\ \cline{3-12}
-		                        &                     & 512  & 12,36  & 21,72  & 2,18   & 49,04      & 1      & 1871,40  & 100\% & 918      & 10961   \\ \cline{3-12}
-		                        &                     & 864  & 59,12  & 21,82  & 2,39   & 234,54     & 1      & 3348,45  & 100\% & 1549,125 & 1358    \\ \cline{3-12}
-		                        &                     & 1024 & 98,54  & 21,79  & 5,19   & 390,94     & 1      & 4014,01  & 100\% & 1836     & 688     \\ \cline{1-12}
+		V                       & BS                  & INST & T[ms]  & GFLOPS & vs IKJ & $\Delta A$ & CMGA   & JOIN     & \%    & GLD\_E & GST\_E  \\ \hline
+		\multirow{10}{*}{G\_L}  & \multirow{5}{*}{8}  & 128  & 0,17   & 25,32  & 12,07  & 1,00       & 0,0039 & 733,88   & 50\%  & - & 141208  \\ \cline{3-12}
+		                        &                     & 256  & 1,10   & 30,63  & 2,74   & 6,61       & 0,0019 & 1512,50  & 50\%  & - & 10904   \\ \cline{3-12}
+		                        &                     & 512  & 10,20  & 26,33  & 2,65   & 61,55      & 0,0010 & 3045,11  & 50\%  & - & 591     \\ \cline{3-12}
+		                        &                     & 864  & 58,03  & 22,23  & 2,43   & 350,32     & 0,0006 & 5162,90  & 50\%  & - & 59      \\ \cline{3-12}
+		                        &                     & 1024 & 87,08  & 24,66  & 5,87   & 525,70     & 0,0005 & 6121,00  & 50\%  & - & 35      \\ \cline{2-12}
+		                        & \multirow{5}{*}{16} & 128  & 0,12   & 33,95  & 16,19  & 1,00       & 0,0039 & 245,81   & 100\% & - & 282894  \\ \cline{3-12}
+		                        &                     & 256  & 1,03   & 32,58  & 2,91   & 8,34       & 0,0019 & 552,75   & 100\% & - & 17551   \\ \cline{3-12}
+		                        &                     & 512  & 7,80   & 34,41  & 3,46   & 63,14      & 0,0010 & 1136,81  & 100\% & - & 1141    \\ \cline{3-12}
+		                        &                     & 864  & 39,38  & 32,75  & 3,58   & 318,82     & 0,0006 & 1930,81  & 100\% & - & 133     \\ \cline{3-12}
+		                        &                     & 1024 & 71,83  & 29,90  & 7,11   & 581,49     & 0,0005 & 2286,30  & 100\% & - & 63      \\ \cline{1-12}
+		\multirow{10}{*}{G\_NL} & \multirow{5}{*}{8}  & 128  & 0,41   & 10,11  & 4,82   & 1,00       & 0,0039 & 242,44   & 50\%  & - & 77004   \\ \cline{3-12}
+		                        &                     & 256  & 3,47   & 9,66   & 0,86   & 8,37       & 0,0019 & 501,87   & 50\%  & - & 4603    \\ \cline{3-12}
+		                        &                     & 512  & 44,66  & 6,01   & 0,60   & 107,67     & 0,0010 & 1012,71  & 50\%  & - & 181     \\ \cline{3-12}
+		                        &                     & 864  & 204,65 & 6,30   & 0,69   & 493,37     & 0,0006 & 1718,62  & 50\%  & - & 23      \\ \cline{3-12}
+		                        &                     & 1024 & 504,72 & 4,25   & 1,01   & 1216,81    & 0,0005 & 2037,98  & 50\%  & - & 8       \\ \cline{2-12}
+		                        & \multirow{5}{*}{16} & 128  & 0,81   & 5,15   & 2,45   & 1,00       & 0,0039 & 29,13    & 100\% & - & 41510   \\ \cline{3-12}
+		                        &                     & 256  & 6,52   & 5,15   & 0,46   & 8,00       & 0,0019 & 65,27    & 100\% & - & 2595    \\ \cline{3-12}
+		                        &                     & 512  & 75,20  & 3,57   & 0,36   & 92,30      & 0,0010 & 134,00   & 100\% & - & 112     \\ \cline{3-12}
+		                        &                     & 864  & 388,92 & 3,32   & 0,36   & 477,38     & 0,0006 & 227,41   & 100\% & - & 13      \\ \cline{3-12}
+		                        &                     & 1024 & 990,65 & 2,17   & 0,52   & 1215,98    & 0,0005 & 269,23   & 100\% & - & 4       \\ \cline{1-12}
+		\multirow{10}{*}{S\_L}  & \multirow{5}{*}{8}  & 128  & 0,13   & 33,10  & 15,78  & 1,00       & 1      & 3879,09  & 50\%  & - & 1112210 \\ \cline{3-12}
+		                        &                     & 256  & 0,86   & 38,81  & 3,47   & 6,82       & 1      & 8493,26  & 50\%  & - & 82978   \\ \cline{3-12}
+		                        &                     & 512  & 6,85   & 39,20  & 3,94   & 54,03      & 1      & 17661,66 & 50\%  & - & 5254    \\ \cline{3-12}
+		                        &                     & 864  & 54,47  & 23,68  & 2,59   & 429,82     & 1      & 25701,09 & 50\%  & - & 330     \\ \cline{3-12}
+		                        &                     & 1024 & 32,73  & 65,60  & 15,61  & 258,29     & 1      & 42639,10 & 50\%  & - & 652     \\ \cline{2-12}
+		                        & \multirow{5}{*}{16} & 128  & 0,24   & 17,17  & 8,19   & 1,00       & 1      & 2352,76  & 100\% & - & 2155375 \\ \cline{3-12}
+		                        &                     & 256  & 1,61   & 20,78  & 1,86   & 6,61       & 1      & 6582,70  & 100\% & - & 170279  \\ \cline{3-12}
+		                        &                     & 512  & 12,32  & 21,79  & 2,19   & 50,45      & 1      & 15496,47 & 100\% & - & 11433   \\ \cline{3-12}
+		                        &                     & 864  & 59,10  & 21,83  & 2,39   & 241,97     & 1      & 27996,80 & 100\% & - & 1426    \\ \cline{3-12}
+		                        &                     & 1024 & 98,48  & 21,81  & 5,19   & 403,22     & 1      & 33641,27 & 100\% & - & 724     \\ \cline{1-12}
+		\multirow{10}{*}{S\_NL} & \multirow{5}{*}{8}  & 128  & 0,13   & 31,95  & 15,24  & 1,00       & 1      & 1429,14  & 50\%  & - & 1726347 \\ \cline{3-12}
+		                        &                     & 256  & 0,87   & 38,68  & 3,46   & 6,61       & 1      & 3247,42  & 50\%  & - & 132073  \\ \cline{3-12}
+		                        &                     & 512  & 6,86   & 39,14  & 3,94   & 52,25      & 1      & 6899,09  & 50\%  & - & 8390    \\ \cline{3-12}
+		                        &                     & 864  & 32,77  & 39,36  & 4,30   & 249,63     & 1      & 11969,10 & 50\%  & - & 1041    \\ \cline{3-12}
+		                        &                     & 1024 & 60,00  & 35,79  & 8,52   & 457,02     & 1      & 14265,87 & 50\%  & - & 487     \\ \cline{2-12}
+		                        & \multirow{5}{*}{16} & 128  & 0,25   & 16,64  & 7,93   & 1,00       & 1      & 297,64   & 100\% & - & 2118706 \\ \cline{3-12}
+		                        &                     & 256  & 1,65   & 20,39  & 1,82   & 6,53       & 1      & 810,56   & 100\% & - & 164427  \\ \cline{3-12}
+		                        &                     & 512  & 12,36  & 21,72  & 2,18   & 49,04      & 1      & 1871,40  & 100\% & - & 10961   \\ \cline{3-12}
+		                        &                     & 864  & 59,12  & 21,82  & 2,39   & 234,54     & 1      & 3348,45  & 100\% & - & 1358    \\ \cline{3-12}
+		                        &                     & 1024 & 98,54  & 21,79  & 5,19   & 390,94     & 1      & 4014,01  & 100\% & - & 688     \\ \cline{1-12}
 	\end{tabular}
 	\captionof{table}{Miary efektywności dla 6 pętli, przetwarzanie równolegle}
 \end{center}
@@ -369,6 +372,13 @@ Nazwy kolumn:
 	\item GST\_E - gst\_efficiency
 \end{itemize}
 
+Nazwy wersji:
+\begin{itemize}
+	\item G\_L - wykorzystanie pamięci globalnej, dostęp łączony
+	\item G\_NL - wykorzystanie pamięci globalnej, dostęp niełączony
+	\item S\_L - wykorzystanie pamięci współdzielonej bloku wątków, dostęp łączony
+	\item S\_NL - wykorzystanie pamięci współdzielonej bloku wątków, dostęp niełączony
+\end{itemize}
 
 \section{Wnioski}
 Przy analizie wyników przeprowadzonego eksperymentu można na pierwszy rzut oka zauważyć
@@ -378,7 +388,69 @@ pamięcią bloku wątków. Obie obserwacje były łatwe do przewidzenia, bowiem 
 wykorzystanych miar efektywności - zajętość multiprocesora obliczyliśmy w kalkulatorze zajętości,
 a CGMA, jako miara instensywności obliczeń przyjmuje wartoci bardzo małe, gdy pobieramy 
 każdorazowo dane z pamięci globalnej, lub bliskie (lub równe) 1, gdy korzystamy z pamięci
-współdzielonej bloku wątków, czego również można się było spodziewać.
+współdzielonej bloku wątków, czego również można się było spodziewać. \\
+
+Biorąc pod uwagę prędkość przetwarzania, można zauważyć, że pozostaje ona raczej stała. Maleje tylko dla dostępów niełączonych 
+do pamięci globalnej w wariancie G\_NL. Jest to najmniej korzystny wariant pod względem przetwarzania, ponieważ 
+oprócz tego, że występuje bardzo dużo odwołań do pamięci globalnej, to nie występuje zjawisko łączenia dostępów do pamięci
+dla sąsiednich wątków w half-warpie. Dodatkowo można zauważyć, że prędkość przetwarzania 
+jest wyższa dla rozmiaru bloku 8x8 niż dla rozmiaru bloku 16x16 dla wszystkich wariantów kodu 
+oprócz wersji G\_L, gdzie występują łączone dostępy do pamięci globalnej. Jest to zachowanie 
+nieoczekiwane, ponieważ dla bloków 8x8 zajętość procesora wynosi tylko 50\%, a w przypadku bloków o 
+rozmiarze 16x16 zajętość wynosi 100\%. \\ 
+
+Pomiary czasu przetwarzania dla różnych wersji kodu dały rezultaty zgodne z oczekiwaniami: 
+czas działania dla wersji kodu, gdzie wykorzystane były pamięci współdzielone bloku wątków, 
+były znacząco krótsze od tych z dostępem globalnym. Dla największych instancji z dostępem 
+niełączonym czas przetwarzania jest 10 razy krótszy dla wersji z pamięcią współdzieloną.
+Wynika to z efektywnego zastosowania pamięci współdzielonych dla bloków wątków, które w 
+znacznym stopniu ograniczają kosztowne czasowo odwołania do pamięci globalnej karty graficznej.
+Pewną anomalią są krótsze czasy przetwarzania dla wersji kodu G\_L dla rozmiaru bloku 16x16
+w porównaniu do wersji S\_L (blok 16x16). \\
+
+Wyniki przyspieszenia względem sekwencyjnego algorytmu mnożenia macierzy IKJ pokazują, że 
+wykorzystanie karty graficzniej rzeczywiście przyspiesza obliczenia (nawet 15-krotnie dla 
+najmniejszych instancji). Jednocześnie nie jest zaskoczeniem, że przyspieszenie wariantów
+S\_L i S\_NL, wykorzystujących pamięć współdzieloną, jest większe, niż tych z dostępem 
+globalnym. Jedynym przypadkiem gdzie algorytm sekwencyjny uzyskuje lepsze
+rezultaty jest najmniej korzystny wariant G\_NL, co jest potwiedzeniem wysokiego kosztu
+niełączonych odwołań wątków do pamięci. \\
+
+Wpływ wykorzystania pamięci współdzielonej można również zaobserwować w wynikach obliczeń 
+przyspieszenia względem rozmiaru instancji. Wyniki dla wariantów S\_L i S\_NL są zauważalnie 
+lepsze - wraz ze wzrostem instancji czas przetwarzania nie wzrasta tak bardzo, jak w przypadku
+wariantów G\_L i G\_NL. Można zatem wysnuć wniosek, iż wykorzystanie współdzielonej pamięci
+ma szczególnie pozytywny wpływ na czas przetwarzania w przypadku, gdy rozmiar instancji rośnie. \\
+
+Kolejna wyliczona przez nas miara, to stopień łączenia dostępów do pamięci globalnej, 
+wyliczony dla wszystkich multiprocesorów na karcie graficznej. \\
+
+Bierzemy tutaj pod uwagę wszystkie odwołania do pamięci globalnej, które składają się z:
+pobranie dwóch tablic o rozmiarach n x n przez kazdy w bloków oraz n x n
+zapisów wyników do macierzy wynikowej. W rzeczywistości jednak każdy blok nie potrzebuje
+całych macierzy, a jedynie ich fragmenty o rozmiarach 8x8 lub 16x16, w zależności
+od rozmiaru bloku. Ilość transakcji multiprocesor-pamięć została odczytana z
+miar gst total (obliczonej jako suma gst\_32, gst\_64 i gst\_128) oraz sumy gld\_32, gld\_64 oraz
+gld\_128. Poprawność obliczonych wyników stoi pod znakiem zapytania, ze względu na zerowe wartości 
+wszytskich miar określających ilość zapisów do pamięci globalnej (gld\_*), otrzymanych
+z Visual Profilera. W swoich rozważaniach pominiemy interpretację otrzymanych 
+wartości, ponieważ może ona nie mieć sensu ze względu na błędne wyniki oraz prowadzić do 
+błędnych wniosków. \\
+
+Ze względu na wyżej opisane, niezależne od nas błędy pomiarów, niemożliwe było obliczenie 
+liczby odczytów danych z pamięci globalnej. Dlatego też miara GLD\_E, określająca efektywność 
+pobrań danych z pamięci globalnej, pozostaje niezdefiniowana. \\
+
+Miara GST\_E, obrazująca efektywność zapisów do pamięci, pokazuje, że wraz ze wzrostem rozmiaru
+instancji zapisy do pamięci są coraz mniej efektywne. Niemniej jednak, efektywność zapisu dla 
+wariantów S\_L i S\_NL jest większa, niż dla wariantów z globalnym dostępem do pamięci. 
+
+\section{Podsumowanie}
+Po przeprowadzeniu eksperymentu i dogłębnej analizie wyników nasuwają się następujące wnioski - 
+przetwarzanie z wykorzystaniem pamięci współdzielonej bloku wątków jest na ogół znacznie bardziej
+efektywne niż obliczenia wykorzystujące bezpośrednie odwołania do pamięci globalnej. Dodatkowo
+znaczący wpływ ma takie ustawienie kolejności przetwarzania, żeby wykorzystywać mechanizm łączenia
+transakcji podczas dostępów do pamięci.
 
 
 \end{document}
